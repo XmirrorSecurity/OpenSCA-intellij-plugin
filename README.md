@@ -1,0 +1,1 @@
+# IntelliJ平台的Open SCA插件

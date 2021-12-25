@@ -1,22 +1,48 @@
 <idea-plugin>
-    <id>cn.xmirror.sca.opensca-intellij-plugin</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <id>cn.xmirror.sca.xcheck</id>
+    <name>OpenSCA Xcheck</name>
+    <vendor email="services@anpro-tech.com" url="https://www.xmirror.cn/">Xmirror</vendor>
 
-    <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
-    ]]></description>
+    <description>
+        <![CDATA[
+            The OpenSCA Xcheck plug-in of the Intellij platform can quickly detect and analyze code quality issues, and count and display at-risk components and vulnerabilities, as well as suggest fixes.
+            <br><br><br>
+            Usage:<br>
+            <ul>
+                <li>Click "Setting" in OpenSCA Toolbar to set information of server</li>
+                <li>Click "Run" in OpenSCA Toolbar to detect and analyze code</li>
+                <li>Click "Stop" in OpenSCA Toolbar to stop detect</li>
+                <li>Click "Clean" in OpenSCA Toolbar to clean all</li>
+            </ul>
+        ]]>
+    </description>
 
-    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
-         on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <toolWindow factoryClass="cn.xmirror.sca.ui.window.ToolWindowFactory"
+                    id="OpenSCA"
+                    icon="Icons.XMIRROR_LOGO"
+                    anchor="bottom"/>
+        <applicationConfigurable instance="cn.xmirror.sca.ui.action.Configurable"
+                                 id="cn.xmirror.sca.ui.action.Configurable"/>
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
+        <group id="cn.xmirror.sca.ActionBar">
+            <action id="cn.xmirror.sca.ui.action.RunAction"
+                    class="cn.xmirror.sca.ui.action.RunAction"
+                    text="Run"/>
+            <action id="cn.xmirror.sca.ui.action.StopAction"
+                    class="cn.xmirror.sca.ui.action.StopAction"
+                    text="Stop"/>
+            <action id="cn.xmirror.sca.ui.action.CleanAction"
+                    class="cn.xmirror.sca.ui.action.CleanAction"
+                    text="Clean"/>
+            <separator/>
+            <action id="cn.xmirror.sca.ui.action.SettingAction"
+                    class="cn.xmirror.sca.ui.action.SettingAction"
+                    text="Setting"/>
+        </group>
     </actions>
 </idea-plugin>

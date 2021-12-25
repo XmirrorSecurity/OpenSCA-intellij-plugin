@@ -4,14 +4,16 @@ plugins {
 }
 
 group 'cn.xmirror.sca'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -19,10 +21,13 @@ intellij {
     version = '2021.3'
 }
 patchPluginXml {
-    changeNotes = """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+    version = project.version
+    sinceBuild = '203'
+    untilBuild = '213.*'
 }
 test {
     useJUnitPlatform()
+}
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

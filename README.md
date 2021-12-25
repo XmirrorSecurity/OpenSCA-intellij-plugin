@@ -1,1 +1,1 @@
-# IntelliJ平台的Open SCA插件
+# IntelliJ平台的OpenSCA Xcheck插件

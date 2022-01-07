@@ -23,16 +23,21 @@ public class EngineDownloader {
         // 检测引擎是否存在
         String engineCliPath = EngineAssistant.getEngineCliPath();
         File engineCli = new File(engineCliPath);
-        if (!HttpService.needUpdateEngine(EngineAssistant.getEngineVersionPath()) && engineCli.isFile()) return;
-        // 创建目录
-        String engineCliDirectory = EngineAssistant.getDefaultEngineCliDirectory();
-        if (!FileUtil.createDirectory(new File(engineCliDirectory))) {
-            throw new SCAException(ErrorEnum.CREATE_DIR_ERROR, engineCliDirectory);
+        if (HttpService.needUpdateEngine(EngineAssistant.getEngineVersionPath()) || !engineCli.isFile()) {
+            // 创建目录
+            String engineCliDirectory = EngineAssistant.getDefaultEngineCliDirectory();
+            if (!FileUtil.createDirectory(new File(engineCliDirectory))) {
+                throw new SCAException(ErrorEnum.CREATE_DIR_ERROR, engineCliDirectory);
+            }
+            // 下载引擎
+            if (engineCli.isDirectory()) {
+                throw new SCAException(ErrorEnum.ENGINE_DOWNLOAD_ERROR);
+            }
+            ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> HttpService.downloadEngine(engineCli.getAbsolutePath()), "更新/下载OpenSCA命令行工具", false, project);
         }
-        // 下载引擎
-        if (engineCli.isDirectory()) {
-            throw new SCAException(ErrorEnum.ENGINE_DOWNLOAD_ERROR);
+        // 设置引擎执行权限
+        if (!engineCli.canExecute() && !engineCli.setExecutable(true)) {
+            throw new SCAException(ErrorEnum.ENGINE_SET_EXECUTABLE_ERROR, engineCliPath);
         }
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> HttpService.downloadEngine(engineCli.getAbsolutePath()), "更新/下载OpenSCA命令行工具", false, project);
     }
 }

@@ -19,6 +19,7 @@ public enum ErrorEnum {
     ENGINE_UNSUPPORTED_SYSTEM_ERROR(40041, "不支持此操作系统"),
     ENGINE_DOWNLOAD_ERROR(40042, "下载引擎失败"),
     ENGINE_UNREACHABLE_ERROR(40043, "引擎连接失败"),
+    ENGINE_SET_EXECUTABLE_ERROR(40044, "引擎设置可执行权限失败，请手动设置后重新检测"),
 
     // 检测相关
     CHECK_PARSE_RESULT_ERROR(40081,"结果解析错误"),

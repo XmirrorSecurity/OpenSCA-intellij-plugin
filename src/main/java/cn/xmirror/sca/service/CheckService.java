@@ -62,7 +62,7 @@ public class CheckService {
                 String engineCliPath = EngineAssistant.getEngineCliPath();
                 String inputPath = project.getBasePath();
                 String outputPath = EngineAssistant.getCheckResultPath(project);
-                String[] cmd = {engineCliPath, "-ip", url, "-token", token, "-path", inputPath, "-out", outputPath, "-vuln", "-cache"};
+                String[] cmd = {engineCliPath, "-url", url, "-token", token, "-path", inputPath, "-out", outputPath, "-vuln", "-cache"};
                 Runtime.getRuntime().exec(cmd).waitFor();
                 // 解析结果
                 overview.setEndTime(new Date());

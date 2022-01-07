@@ -13,9 +13,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.apache.http.HttpStatus;
 import org.jsoup.Connection;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

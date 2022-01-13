@@ -4,6 +4,7 @@ import cn.xmirror.sca.common.ProjectIdentity;
 import cn.xmirror.sca.common.constant.EngineOsEnum;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
+import cn.xmirror.sca.common.util.VerifyUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 
@@ -27,7 +28,9 @@ public class EngineAssistant {
      */
     public static String getEngineCliPath() {
         String engineCliName = getEngineCliName();
-        return defaultEngineCliDirectory + File.separator + engineCliName;
+        String engineCliPath = defaultEngineCliDirectory + File.separator + engineCliName;
+        VerifyUtils.verifySafeCommand(engineCliPath);
+        return engineCliPath;
     }
 
     /**

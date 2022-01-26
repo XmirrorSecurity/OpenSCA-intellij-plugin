@@ -37,6 +37,7 @@ public class CheckService {
     private static final Integer running = 2;
 
     private static final Map<Project, Future<?>> futures = new ConcurrentHashMap<>();
+    private static final Map<Project, Process> processes = new ConcurrentHashMap<>();
 
     /**
      * 开始检测
@@ -63,7 +64,9 @@ public class CheckService {
                 String inputPath = project.getBasePath();
                 String outputPath = EngineAssistant.getCheckResultPath(project);
                 String[] cmd = {engineCliPath, "-url", url, "-token", token, "-path", inputPath, "-out", outputPath, "-vuln", "-cache"};
-                Runtime.getRuntime().exec(cmd).waitFor();
+                Process process = Runtime.getRuntime().exec(cmd);
+                processes.put(project, process);
+                process.waitFor();
                 // 解析结果
                 overview.setEndTime(new Date());
                 MutableTreeNode resultTree = ResultParser.parseResult(outputPath, overview);
@@ -71,6 +74,7 @@ public class CheckService {
             } catch (Exception e) {
                 listener.onError(e);
             } finally {
+                processes.remove(project);
                 listener.progress(false);
                 status.put(project, stopped);
             }
@@ -88,6 +92,7 @@ public class CheckService {
     public static void stop(Project project) {
         futures.computeIfPresent(project, (p, f) -> {
             status.put(project, stopping);
+            processes.get(project).destroyForcibly();
             f.cancel(true);
             return null;
         });

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'cn.xmirror.sca'
-version '1.0.1'
+version '1.0.2'
 
 repositories {
     mavenCentral()
@@ -23,7 +23,7 @@ intellij {
 patchPluginXml {
     version = project.version
     sinceBuild = '203'
-    untilBuild = '213.*'
+    untilBuild = '998.*'
     changeNotes = """
         <ui>
             <li>修复Unix系统下命令行工具执行失败</li>

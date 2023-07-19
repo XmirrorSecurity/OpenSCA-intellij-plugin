@@ -39,6 +39,8 @@ public class CheckService {
     private static final Map<Project, Future<?>> futures = new ConcurrentHashMap<>();
     private static final Map<Project, Process> processes = new ConcurrentHashMap<>();
 
+    public static String PROJECT_BASE_PATH = "";
+
     /**
      * 开始检测
      *
@@ -46,6 +48,7 @@ public class CheckService {
      * @param listener 检测监听器
      */
     public static void run(Project project, CheckListener listener) {
+        PROJECT_BASE_PATH = project.getBasePath()+File.separator;
         status.put(project, running);
         Overview overview = new Overview();
         overview.setStartTime(new Date());

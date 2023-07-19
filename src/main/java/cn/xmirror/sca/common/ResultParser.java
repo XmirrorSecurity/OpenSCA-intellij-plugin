@@ -3,11 +3,14 @@ package cn.xmirror.sca.common;
 import cn.xmirror.sca.common.constant.ExploitLevelEnum;
 import cn.xmirror.sca.common.constant.SecurityLevelEnum;
 import cn.xmirror.sca.common.dto.Component;
+import cn.xmirror.sca.common.dto.FilePath;
 import cn.xmirror.sca.common.dto.Overview;
 import cn.xmirror.sca.common.dto.Vulnerability;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
+import cn.xmirror.sca.service.CheckService;
 import cn.xmirror.sca.ui.window.tree.ComponentTreeNode;
+import cn.xmirror.sca.ui.window.tree.FilePathTreeNode;
 import cn.xmirror.sca.ui.window.tree.RootTreeNode;
 import cn.xmirror.sca.ui.window.tree.VulnerabilityTreeNode;
 import com.alibaba.fastjson.JSON;
@@ -58,19 +61,30 @@ public class ResultParser {
     public static MutableTreeNode generateTree(Overview overview, List<Component> components) {
         RootTreeNode rootTreeNode = new RootTreeNode(overview);
         Set<String> distinctVulnerability = new HashSet<>();
+        Arrays.fill(overview.getCss(),0);
+        Arrays.fill(overview.getVss(),0);
         if (components != null) {
-            distinctAndSortComponent(components).forEach(component -> {
-                ComponentTreeNode componentTreeNode = new ComponentTreeNode(component);
-                for (Vulnerability vulnerability : component.getVulnerabilities()) {
-                    checkVulnerability(vulnerability);
-                    if (distinctVulnerability.add(vulnerability.getId())) {
-                        SecurityLevelEnum.statistics(vulnerability.getSecurityLevelId(), overview.getVss());
+            Collection<Component> distinctAndSortComponentCollection = distinctAndSortComponent(components);
+            List<String> pathList = distinctAndSortComponentCollection.stream().map(Component::getPath)
+                                    .distinct().collect(Collectors.toList());
+            pathList.forEach(path ->{
+                FilePathTreeNode filePathTreeNode = new FilePathTreeNode(new FilePath(path));
+                distinctAndSortComponentCollection.forEach(component -> {
+                    if (component.getPath().equals(path)){
+                        ComponentTreeNode componentTreeNode = new ComponentTreeNode(component);
+                        for (Vulnerability vulnerability : component.getVulnerabilities()) {
+                            checkVulnerability(vulnerability);
+                            if (distinctVulnerability.add(vulnerability.getId())) {
+                                SecurityLevelEnum.statistics(vulnerability.getSecurityLevelId(), overview.getVss());
+                            }
+                            VulnerabilityTreeNode vulnerabilityTreeNode = new VulnerabilityTreeNode(vulnerability);
+                            componentTreeNode.add(vulnerabilityTreeNode);
+                        }
+                        SecurityLevelEnum.statistics(component.getSecurityLevelId(), overview.getCss());
+                        filePathTreeNode.add(componentTreeNode);
                     }
-                    VulnerabilityTreeNode vulnerabilityTreeNode = new VulnerabilityTreeNode(vulnerability);
-                    componentTreeNode.add(vulnerabilityTreeNode);
-                }
-                SecurityLevelEnum.statistics(component.getSecurityLevelId(), overview.getCss());
-                rootTreeNode.add(componentTreeNode);
+                });
+                rootTreeNode.add(filePathTreeNode);
             });
         }
         return rootTreeNode;
@@ -97,19 +111,17 @@ public class ResultParser {
     private static Collection<Component> distinctAndSortComponent(List<Component> components) {
         Map<String, Component> mergeComponents = new HashMap<>();
         for (Component component : components) {
-            String path = component.getPath();
             String coordinate = component.getVendor() + component.getName() + component.getVersion();
             Component cpt = mergeComponents.get(coordinate);
             if (cpt == null) {
-                List<String> paths = new ArrayList<>();
-                if (path != null) paths.add(path);
-                component.setPath(null);
-                component.setPaths(paths);
+                component.setPaths(component.getPaths());
+                if (component.getPaths().size() == 1) {
+                    String path = component.getPaths().get(0).replace(CheckService.PROJECT_BASE_PATH,"");
+                    component.setPath(path.substring(0, path.indexOf("/[")));
+                }
                 component.setVulnerabilities(component.getVulnerabilities().stream().sorted(Comparator.comparingInt(Vulnerability::getSecurityLevelId)).collect(Collectors.toList()));
                 component.setSecurityLevelId(component.getVulnerabilities().get(0).getSecurityLevelId());
                 mergeComponents.put(coordinate, component);
-            } else if (path != null) {
-                cpt.getPaths().add(path);
             }
         }
         return mergeComponents.values().stream().sorted(Comparator.comparingInt(Component::getSecurityLevelId)).collect(Collectors.toList());

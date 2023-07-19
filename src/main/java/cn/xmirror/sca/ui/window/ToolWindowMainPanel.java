@@ -32,6 +32,10 @@ public class ToolWindowMainPanel extends JPanel implements Disposable, CheckList
         initPanel();
     }
 
+    public ToolWindowContentPanel getContentPanel() {
+        return contentPanel;
+    }
+
     private void initPanel() {
         // 窗口内容面板
         contentPanel = new ToolWindowContentPanel(project);

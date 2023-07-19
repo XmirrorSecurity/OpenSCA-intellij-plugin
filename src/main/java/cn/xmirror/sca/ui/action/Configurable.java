@@ -25,6 +25,7 @@ public class Configurable implements com.intellij.openapi.options.Configurable {
 
     @Override
     public boolean isModified() {
+        //指示是否修改了Swing表单。这个方法经常被调用，所以不会花很长时间。如果设置被修改，返回:true，否则返回false
         return StringUtil.compare(configurablePanel.getUrl(), SettingStateSafe.getUrl(SettingStateSafe.KEY), false) != 0
                 || StringUtil.compare(configurablePanel.getToken(), SettingStateSafe.getToken(SettingStateSafe.KEY), false) != 0;
     }

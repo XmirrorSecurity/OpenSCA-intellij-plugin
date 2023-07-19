@@ -40,12 +40,18 @@ public class DescriptionComponentPanel extends JPanel {
     }
 
     private JPanel getTitlePanel() {
-        JPanel panel = PaintUtils.defaultGridPanel(2, 1);
+        JPanel panel = PaintUtils.defaultGridPanel(4, 1);
         JLabel titleLabel = new JLabel(component.getName());
         titleLabel.setFont(PaintUtils.primaryTitleFont());
         titleLabel.setIcon(Icons.getIconFromResources(component.getSecurityLevelId(), Icons.IconSize.SIZE24));
         panel.add(titleLabel, new MyGridConstraints(0).build());
         panel.add(vendorAndVersion(), MyGridConstraints.gridBuilder(1).build());
+        String language = StringUtil.isNotEmpty(component.getLanguage()) ? component.getLanguage() : "--";
+        JLabel languageLabel = new JLabel("所属语言： "+language);
+        panel.add(languageLabel, MyGridConstraints.gridBuilder(2).build());
+        String dependType = component.isDirect() ? "直接依赖" : "间接依赖";
+        JLabel dependTypeLabel = new JLabel("依赖类型： "+dependType);
+        panel.add(dependTypeLabel, MyGridConstraints.gridBuilder(3).build());
         return panel;
     }
 
@@ -91,7 +97,7 @@ public class DescriptionComponentPanel extends JPanel {
             String p = path.substring(0, path.indexOf("/["));
 
             ActionLink actionLink = new ActionLink(p);
-            VirtualFile file = fileSystem.findFileByPath(project.getBasePath() + File.separator + p);
+            VirtualFile file = fileSystem.findFileByPath(p);
             actionLink.addActionListener(getActionLinkListener(editorManager, file));
 
             panel.add(actionLink, MyGridConstraints.gridBuilder(i * 2).setIndent(0).setColumn(1).build());

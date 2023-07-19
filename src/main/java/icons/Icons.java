@@ -21,14 +21,14 @@ public class Icons {
     public static final Icon LICENSE_STATISTICS = IconLoader.getIcon("/icons/license_statistics_20.svg");
 
     // 危险级别
-    private static final Icon CRITICAL = IconLoader.getIcon("/icons/severity_critical.svg");
-    private static final Icon CRITICAL_24 = IconLoader.getIcon("/icons/severity_critical_24.svg");
-    private static final Icon HIGH = IconLoader.getIcon("/icons/severity_high.svg");
-    private static final Icon HIGH_24 = IconLoader.getIcon("/icons/severity_high_24.svg");
-    private static final Icon LOW = IconLoader.getIcon("/icons/severity_low.svg");
-    private static final Icon LOW_24 = IconLoader.getIcon("/icons/severity_low_24.svg");
-    private static final Icon MEDIUM = IconLoader.getIcon("/icons/severity_medium.svg");
-    private static final Icon MEDIUM_24 = IconLoader.getIcon("/icons/severity_medium_24.svg");
+    public static final Icon CRITICAL = IconLoader.getIcon("/icons/severity_critical.svg");
+    public static final Icon CRITICAL_24 = IconLoader.getIcon("/icons/severity_critical_24.svg");
+    public static final Icon HIGH = IconLoader.getIcon("/icons/severity_high.svg");
+    public static final Icon HIGH_24 = IconLoader.getIcon("/icons/severity_high_24.svg");
+    public static final Icon LOW = IconLoader.getIcon("/icons/severity_low.svg");
+    public static final Icon LOW_24 = IconLoader.getIcon("/icons/severity_low_24.svg");
+    public static final Icon MEDIUM = IconLoader.getIcon("/icons/severity_medium.svg");
+    public static final Icon MEDIUM_24 = IconLoader.getIcon("/icons/severity_medium_24.svg");
     private static final Icon NO_RATING = IconLoader.getIcon("/icons/severity_no_rating.svg");
     private static final Icon NO_RATING_24 = IconLoader.getIcon("/icons/severity_no_rating_24.svg");
 

@@ -5,15 +5,15 @@
 
     <description>
         <![CDATA[
-            The OpenSCA Xcheck plug-in of the Intellij platform can quickly detect and analyze code quality issues, and count and display at-risk components and vulnerabilities, as well as suggest fixes.
-            <br><br><br>
-            Usage:<br>
-            <ul>
-                <li>Click "Setting" in OpenSCA Toolbar to set information of server</li>
-                <li>Click "Run" in OpenSCA Toolbar to detect and analyze code</li>
-                <li>Click "Stop" in OpenSCA Toolbar to stop detect</li>
-                <li>Click "Clean" in OpenSCA Toolbar to clean all</li>
-            </ul>
+        The OpenSCA Xcheck plug-in of the Intellij platform can quickly detect and analyze code quality issues, and count and display at-risk components and vulnerabilities, as well as suggest fixes.
+        <br><br><br>
+        Usage:<br>
+        <ul>
+            <li>Click "Setting" in OpenSCA Toolbar to set information of server</li>
+            <li>Click "Run" in OpenSCA Toolbar to detect and analyze code</li>
+            <li>Click "Stop" in OpenSCA Toolbar to stop detect</li>
+            <li>Click "Clean" in OpenSCA Toolbar to clean all</li>
+        </ul>
         ]]>
     </description>
 
@@ -29,6 +29,28 @@
     </extensions>
 
     <actions>
+        <group id="cn.xmirror.sca.LevelFilterBar">
+            <action id="cn.xmirror.sca.ui.action.DisplayCritical"
+                    class="cn.xmirror.sca.ui.action.DisplayCritical"
+                    text="Display Critical"
+                    description="Display critical results"
+                    icon="Icons.CRITICAL"/>
+            <action id="cn.xmirror.sca.ui.action.DisplayHigh"
+                    class="cn.xmirror.sca.ui.action.DisplayHigh"
+                    text="Display High"
+                    description="Display high results"
+                    icon="Icons.HIGH"/>
+            <action id="cn.xmirror.sca.ui.action.DisplayMedium"
+                    class="cn.xmirror.sca.ui.action.DisplayMedium"
+                    text="Display Medium"
+                    description="Display medium results"
+                    icon="Icons.MEDIUM"/>
+            <action id="cn.xmirror.sca.ui.action.DisplayLow"
+                    class="cn.xmirror.sca.ui.action.DisplayLow"
+                    text="Display Low"
+                    description="Display low results"
+                    icon="Icons.LOW"/>
+        </group>
         <group id="cn.xmirror.sca.ActionBar">
             <action id="cn.xmirror.sca.ui.action.RunAction"
                     class="cn.xmirror.sca.ui.action.RunAction"
@@ -39,6 +61,20 @@
             <action id="cn.xmirror.sca.ui.action.CleanAction"
                     class="cn.xmirror.sca.ui.action.CleanAction"
                     text="Clean"/>
+            <action id="cn.xmirror.sca.ui.action.ExportAction"
+                    class="cn.xmirror.sca.ui.action.ExportAction"
+                    text="Export"/>
+            <separator/>
+            <action id="cn.xmirror.sca.ui.action.ExpandAll"
+                    class="cn.xmirror.sca.ui.action.ExpandAll"
+                    text="Expand All"
+                    description="Expand all elements in the tool window"
+                    icon="/actions/expandall.svg"/>
+            <action id="cn.xmirror.sca.ui.action.CollapseAll"
+                    class="cn.xmirror.sca.ui.action.CollapseAll"
+                    text="Collapse All"
+                    description="Collapse all elements in the tool window"
+                    icon="/actions/collapseall.svg"/>
             <separator/>
             <action id="cn.xmirror.sca.ui.action.SettingAction"
                     class="cn.xmirror.sca.ui.action.SettingAction"

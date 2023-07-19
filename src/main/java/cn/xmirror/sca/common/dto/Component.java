@@ -38,7 +38,7 @@ public class Component implements Serializable {
     private String language;
 
     /**
-     * 组件路径
+     * 组件文件路径
      */
     private String path;
 
@@ -56,4 +56,9 @@ public class Component implements Serializable {
      * 组件路径集合（辅助）
      */
     private List<String> paths;
+
+    /**
+     * 依赖类型 true直接 false间接
+     */
+    private boolean direct;
 }

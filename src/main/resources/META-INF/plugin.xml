@@ -18,6 +18,8 @@
     </description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="cn.xmirror.sca.ui.window.ToolWindowFactory"
@@ -26,6 +28,7 @@
                     anchor="bottom"/>
         <applicationConfigurable instance="cn.xmirror.sca.ui.action.Configurable"
                                  id="cn.xmirror.sca.ui.action.Configurable"/>
+        <applicationService serviceImplementation="cn.xmirror.sca.common.OpenSCASettingState"/>
     </extensions>
 
     <actions>

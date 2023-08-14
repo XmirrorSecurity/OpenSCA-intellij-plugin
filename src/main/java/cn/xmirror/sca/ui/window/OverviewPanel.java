@@ -50,6 +50,7 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
         this.contentPanel = contentPanel;
         generateTree();
         setToolbar(levelFilterBar());
+        tree.getEmptyText().setText("Please Executable Vulnerability Analyse");
         setContent(PaintUtils.wrapWithScrollPanel(tree));
     }
 
@@ -111,19 +112,18 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
      */
     public void render(MutableTreeNode root) {
         rootNode.removeAllChildren();
-        MutableTreeNode node = rootNode;
         if (root != null) {
             rootNode.add(root);
-            node = root;
         }
         // 展示根节点内容
         tree.getSelectionModel().clearSelection();
-        // 刷新树
-        SwingUtilities.invokeLater(() -> tree.updateUI());
         // 展开根节点
         TreePath treePath = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(rootNode));
         expandNode(tree,rootNode,treePath,3);
+        // 刷新树
+        SwingUtilities.invokeLater(() -> tree.updateUI());
     }
+
 
     public Tree getTree() {
         return tree;

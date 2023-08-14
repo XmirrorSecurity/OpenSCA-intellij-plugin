@@ -1,6 +1,6 @@
 package cn.xmirror.sca.ui.window;
 
-import cn.xmirror.sca.common.SettingStateSafe;
+import cn.xmirror.sca.common.OpenSCASettingState;
 import cn.xmirror.sca.ui.Notification;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
@@ -172,7 +172,7 @@ public class PaintUtils {
     // ------------------------------ More Information --------------------------------
     public static JPanel moreInfoPanel() {
         JPanel panel = defaultGridPanel(1, 1);
-        String url = SettingStateSafe.getUrl(SettingStateSafe.KEY);
+        String url = OpenSCASettingState.getInstance().getOpenSCASetting().getServerAddress();
         JLabel linkLabel = new JLabel("<html>更多信息请<u><a href='" + url + "'>登录平台</a></u>查看</html>");
         linkLabel.addMouseListener(linkLabelMouseListener(linkLabel, url));
         linkLabel.setIcon(AllIcons.General.Information);

@@ -1,7 +1,7 @@
 package cn.xmirror.sca.service;
 
+import cn.xmirror.sca.common.OpenSCASettingState;
 import cn.xmirror.sca.common.SCAThreadPool;
-import cn.xmirror.sca.common.SettingStateSafe;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
 import cn.xmirror.sca.common.util.HttpUtils;
@@ -75,9 +75,7 @@ public class HttpService {
      * @return
      */
     public static boolean needUpdateEngine(String versionPath) {
-        Connection.Response response = getRequest(getEngineVersionUri, null, 10000);
-        JSONObject result = JSON.parseObject(response.body());
-        String version = (String) result.get("data");
+        String version = getRemoteServerCliVersion();
         try {
             File versionFile = new File(versionPath);
             if (!versionFile.isFile() || !FileUtil.loadFile(versionFile).equals(version)) {
@@ -90,6 +88,12 @@ public class HttpService {
         return false;
     }
 
+    public static String getRemoteServerCliVersion() {
+        Connection.Response response = getRequest(getEngineVersionUri, null, 10000);
+        JSONObject result = JSON.parseObject(response.body());
+        return (String) result.get("data");
+    }
+
     /**
      * Get请求
      *
@@ -98,8 +102,8 @@ public class HttpService {
      * @return 响应体
      */
     private static Connection.Response getRequest(String uri, Map<String, String> params, Integer timeout) {
-        String url = SettingStateSafe.getUrl(SettingStateSafe.KEY);
-        String token = SettingStateSafe.getToken(SettingStateSafe.KEY);
+        String url = OpenSCASettingState.getInstance().getOpenSCASetting().getServerAddress();
+        String token = OpenSCASettingState.getInstance().getOpenSCASetting().getToken();
         return getRequest(uri, url, token, params, timeout);
     }
 

@@ -39,6 +39,8 @@ public class Icons {
     // 检测
     public static final Icon SUCCEEDED = IconLoader.getIcon("/icons/succeeded.svg");
     public static final Icon FAILED = IconLoader.getIcon("/icons/failed.svg");
+    public static final Icon WARNING = IconLoader.getIcon("/icons/warning.svg");
+    public static final Icon REFRESH = IconLoader.getIcon("/icons/refresh.svg");
 
     public static Icon getIconFromResources(int securityLevel) {
         return getIconFromResources(securityLevel, IconSize.SIZE16);

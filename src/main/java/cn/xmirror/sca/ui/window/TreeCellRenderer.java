@@ -44,7 +44,7 @@ public class TreeCellRenderer extends ColoredTreeCellRenderer {
             Object userObject = node.getUserObject();
             Overview rootUserObject = (Overview) userObject;
             nodeIcon = Icons.OSS_LOGO;
-            text = "Open Security Source"/*rootUserObject.getTitle()*/;
+            text = "Open Security Source";
             attributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
         } else {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;

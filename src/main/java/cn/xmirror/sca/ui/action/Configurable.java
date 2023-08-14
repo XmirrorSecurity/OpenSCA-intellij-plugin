@@ -1,9 +1,9 @@
 package cn.xmirror.sca.ui.action;
 
-import cn.xmirror.sca.common.SettingStateSafe;
+import cn.xmirror.sca.common.OpenSCASettingState;
+import cn.xmirror.sca.common.pojo.OpenSCASetting;
 import cn.xmirror.sca.ui.window.ConfigurablePanel;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -11,6 +11,7 @@ import javax.swing.*;
 public class Configurable implements com.intellij.openapi.options.Configurable {
 
     private ConfigurablePanel configurablePanel;
+    private final OpenSCASettingState openSCASettingState = OpenSCASettingState.getInstance();
 
     @Override
     public @NlsContexts.ConfigurableName String getDisplayName() {
@@ -19,19 +20,35 @@ public class Configurable implements com.intellij.openapi.options.Configurable {
 
     @Override
     public @Nullable JComponent createComponent() {
-        configurablePanel = new ConfigurablePanel(SettingStateSafe.getUrl(SettingStateSafe.KEY), SettingStateSafe.getToken(SettingStateSafe.KEY));
+        OpenSCASetting scaSetting = openSCASettingState.getOpenSCASetting();
+        if (scaSetting!=null){
+            configurablePanel = new ConfigurablePanel(scaSetting.getServerAddress(), scaSetting.getToken(), scaSetting.isUseCustomerCli(), scaSetting.getCustomerPath());
+        }else {
+            configurablePanel = new ConfigurablePanel();
+        }
         return configurablePanel;
     }
 
     @Override
     public boolean isModified() {
         //指示是否修改了Swing表单。这个方法经常被调用，所以不会花很长时间。如果设置被修改，返回:true，否则返回false
-        return StringUtil.compare(configurablePanel.getUrl(), SettingStateSafe.getUrl(SettingStateSafe.KEY), false) != 0
-                || StringUtil.compare(configurablePanel.getToken(), SettingStateSafe.getToken(SettingStateSafe.KEY), false) != 0;
+        OpenSCASetting scaSetting = openSCASettingState.getOpenSCASetting();
+        if (scaSetting == null) {
+            return true;
+        }
+        return !configurablePanel.getUrl().equals(scaSetting.getServerAddress()) ||
+                !configurablePanel.getToken().equals(scaSetting.getToken()) ||
+                configurablePanel.getUseCustomerCli() != scaSetting.isUseCustomerCli() ||
+                !configurablePanel.getCustomerCliPath().equals(scaSetting.getCustomerPath());
     }
 
     @Override
     public void apply() {
-        SettingStateSafe.storeCredentials(configurablePanel.getUrl(), configurablePanel.getToken());
+        String url = configurablePanel.getUrl();
+        String token = configurablePanel.getToken();
+        boolean useCustomerCli = configurablePanel.getUseCustomerCli();
+        String customerCliPath = configurablePanel.getCustomerCliPath();
+        OpenSCASetting scaSetting = new OpenSCASetting(url, token, useCustomerCli, customerCliPath);
+        openSCASettingState.setOpenSCASetting(scaSetting);
     }
 }

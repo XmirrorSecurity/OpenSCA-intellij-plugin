@@ -19,11 +19,12 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = '2021.3'
+    plugins = ['java']
 }
 patchPluginXml {
     version = project.version
     sinceBuild = '203'
-    untilBuild = '998.*'
+    untilBuild = '231.*'
     changeNotes = """
         <ui>
             <li>修复Unix系统下命令行工具执行失败</li>

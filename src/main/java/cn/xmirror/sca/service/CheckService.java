@@ -1,9 +1,6 @@
 package cn.xmirror.sca.service;
 
-import cn.xmirror.sca.common.CheckListener;
-import cn.xmirror.sca.common.ResultParser;
-import cn.xmirror.sca.common.SCAThreadPool;
-import cn.xmirror.sca.common.SettingStateSafe;
+import cn.xmirror.sca.common.*;
 import cn.xmirror.sca.common.dto.Overview;
 import cn.xmirror.sca.common.util.VerifyUtils;
 import cn.xmirror.sca.engine.EngineAssistant;
@@ -57,10 +54,10 @@ public class CheckService {
             try {
                 listener.progress(true);
                 clean(project, listener);
-                // 检查引擎
+                // TODO 检查版本 最新的话下载引擎
                 EngineDownloader.checkAndDownload(project);
-                String url = SettingStateSafe.getUrl(SettingStateSafe.KEY);
-                String token = SettingStateSafe.getToken(SettingStateSafe.KEY);
+                String url = OpenSCASettingState.getInstance().getOpenSCASetting().getServerAddress();
+                String token = OpenSCASettingState.getInstance().getOpenSCASetting().getToken();
                 VerifyUtils.verifyCertification(url, token);
                 // 提交任务
                 String engineCliPath = EngineAssistant.getEngineCliPath();
@@ -108,7 +105,7 @@ public class CheckService {
      * @param listener
      */
     public static void clean(Project project, CheckListener listener) {
-        FileUtil.delete(new File(EngineAssistant.getCheckResultPath(project)));
+        // FileUtil.delete(new File(EngineAssistant.getCheckResultPath(project)));
         listener.clean();
     }
 

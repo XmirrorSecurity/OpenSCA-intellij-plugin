@@ -3,8 +3,10 @@ package cn.xmirror.sca.engine;
 import cn.xmirror.sca.service.HttpService;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
+import cn.xmirror.sca.ui.Notification;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.io.FileUtil;
 
 import java.io.File;

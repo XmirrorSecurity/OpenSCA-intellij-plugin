@@ -2,13 +2,12 @@ package cn.xmirror.sca.ui.window;
 
 import cn.xmirror.sca.common.CheckListener;
 import cn.xmirror.sca.ui.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 
 import javax.swing.*;
@@ -83,7 +82,7 @@ public class ToolWindowMainPanel extends JPanel implements Disposable, CheckList
 
     @Override
     public void onError(Exception e) {
-        Notification.balloonNotify(e.getMessage(), MessageType.ERROR);
+        Notification.balloonNotify(e.getMessage(), NotificationType.ERROR);
     }
 
     @Override

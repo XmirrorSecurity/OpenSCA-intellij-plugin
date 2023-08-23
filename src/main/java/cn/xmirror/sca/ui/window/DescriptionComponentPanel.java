@@ -1,6 +1,7 @@
 package cn.xmirror.sca.ui.window;
 
 import cn.xmirror.sca.common.dto.Component;
+import com.alibaba.fastjson.JSONObject;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -14,7 +15,6 @@ import icons.Icons;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.List;
 
 public class DescriptionComponentPanel extends JPanel {
@@ -123,21 +123,21 @@ public class DescriptionComponentPanel extends JPanel {
     private JPanel getLicenseInfo() {
         List<String> licenses = component.getLicenses();
         if (licenses == null) return null;
-        JPanel panel = PaintUtils.defaultGridPanel(2, 1);
-        JLabel titleLabel = new JLabel("许可证");
+        JPanel panel = PaintUtils.defaultGridPanel(1, 1);
+        JLabel titleLabel = new JLabel();
         titleLabel.setFont(PaintUtils.secondaryTitleFont());
         titleLabel.setIcon(Icons.LICENSE);
-
-        panel.add(titleLabel, new MyGridConstraints(0).build());
-        panel.add(LicenseInfo(), new MyGridConstraints(1).build());
+        titleLabel.setText("许可证："+licenseInfo());
+        panel.add(titleLabel, new MyGridConstraints(0).setColumn(0).build());
         return panel;
     }
 
-    private JPanel LicenseInfo() {
-        JPanel licensePanel = new JPanel();
+    private String licenseInfo() {
+        StringBuilder licenseNames = new StringBuilder();
         for (String license : component.getLicenses()) {
-            licensePanel.add(new Label(license));
+            JSONObject jsonObject = JSONObject.parseObject(license);
+            licenseNames.append(jsonObject.getString("name")+" ");
         }
-        return licensePanel;
+        return licenseNames.toString();
     }
 }

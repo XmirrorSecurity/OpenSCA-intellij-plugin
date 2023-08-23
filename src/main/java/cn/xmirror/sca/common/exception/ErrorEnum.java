@@ -10,6 +10,7 @@ public enum ErrorEnum {
     // 通用
     CREATE_DIR_ERROR(40001, "创建目录失败"),
     COMMAND_INJECTION_ERROR(40002,"存在命令注入风险"),
+    CREATE_FILE_ERROR(40003,"文件创建失败"),
 
     // 配置相关
     SETTING_URL_EMPTY_ERROR(40021, "url不能为空"),

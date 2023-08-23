@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'cn.xmirror.sca'
-version '1.0.2'
+version '1.0.4'
 
 repositories {
     mavenCentral()
@@ -13,18 +13,17 @@ repositories {
 dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
-    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
+    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = '2021.3'
-    plugins = ['java']
 }
 patchPluginXml {
     version = project.version
     sinceBuild = '203'
-    untilBuild = '231.*'
+    untilBuild = '232.*'
     changeNotes = """
         <ui>
             <li>修复Unix系统下命令行工具执行失败</li>

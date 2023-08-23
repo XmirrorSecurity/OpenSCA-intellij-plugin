@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>cn.xmirror.sca.xcheck</id>
+    <id>cn.xmirror.sca.xcheck.test</id>
     <name>OpenSCA Xcheck</name>
     <vendor email="services@anpro-tech.com" url="https://www.xmirror.cn/">Xmirror</vendor>
 
@@ -19,13 +19,14 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
-    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="cn.xmirror.sca.ui.window.ToolWindowFactory"
                     id="OpenSCA"
                     icon="Icons.XMIRROR_LOGO"
                     anchor="bottom"/>
+        <notificationGroup id="OpenSCA Notification Group"
+                           displayType="BALLOON"/>
         <applicationConfigurable instance="cn.xmirror.sca.ui.action.Configurable"
                                  id="cn.xmirror.sca.ui.action.Configurable"/>
         <applicationService serviceImplementation="cn.xmirror.sca.common.OpenSCASettingState"/>

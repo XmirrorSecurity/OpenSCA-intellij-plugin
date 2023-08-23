@@ -83,7 +83,7 @@ public class GuidePanel extends JPanel {
     private JPanel getSettingPanel() {
         Icon titleIcon = AllIcons.General.Settings;
         String titleText = "连接配置";
-        String descriptionText = "点击工具栏的“Setting”按钮，配置平台Url及Token信息，点击“测试连接”按钮可测试连接配置是否正确，连接成功后就可以开始检测啦！";
+        String descriptionText = "点击工具栏的“Setting”按钮，点击“Connect OpenSCA”按钮，跳转平台授权后，自动填充Url,Token！";
         return getDefaultPanel(titleIcon, titleText, descriptionText);
     }
 

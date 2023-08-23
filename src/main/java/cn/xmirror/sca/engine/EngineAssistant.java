@@ -4,7 +4,6 @@ import cn.xmirror.sca.common.ProjectIdentity;
 import cn.xmirror.sca.common.constant.EngineOsEnum;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
-import cn.xmirror.sca.common.util.VerifyUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 
@@ -28,9 +27,7 @@ public class EngineAssistant {
      */
     public static String getEngineCliPath() {
         String engineCliName = getEngineCliName();
-        String engineCliPath = defaultEngineCliDirectory + File.separator + engineCliName;
-        VerifyUtils.verifySafeCommand(engineCliPath);
-        return engineCliPath;
+        return defaultEngineCliDirectory + File.separator + engineCliName;
     }
 
     /**
@@ -108,5 +105,15 @@ public class EngineAssistant {
      */
     public static String getDefaultResultDataDirectory() {
         return defaultResultDataDirectory;
+    }
+
+    /**
+     * 获取检测结果保存路径
+     * @param engineCliPath 自定义cli路径
+     * @return
+     */
+    public static String getCustomerCheckResultPath(String engineCliPath) {
+        String basePath =  new File(engineCliPath).getParent();
+        return basePath + File.separator + "output.json";
     }
 }

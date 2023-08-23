@@ -4,12 +4,14 @@ import cn.xmirror.sca.common.OpenSCASettingState;
 import cn.xmirror.sca.common.SCAThreadPool;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
+import cn.xmirror.sca.common.pojo.OpenSCASetting;
 import cn.xmirror.sca.common.util.HttpUtils;
-import cn.xmirror.sca.common.util.VerifyUtils;
 import cn.xmirror.sca.engine.EngineAssistant;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.jsoup.Connection;
 
@@ -26,9 +28,16 @@ import java.util.function.Consumer;
  */
 public class HttpService {
 
+    private static final Logger LOG = Logger.getInstance(HttpService.class);
+
+
+    private static final String BaseUrlRequest = "https://opensca.xmirror.cn";
     private static final String testConnectionUri = "/oss-saas/api-v1/oss-token/test";
+    private static final String authUri = "/oss-saas/api-v1/oss-token/get/auth";
     private static final String downloadEngineUri = "/oss-saas/api-v1/ide-plugin/open-sca-cli/download";
     private static final String getEngineVersionUri = "/oss-saas/api-v1/ide-plugin/open-sca-cli/version";
+    private static final String downloadCliConfig = "/oss-saas/api-v1/ide-plugin/open-sca-cli/config/download";
+    private static final Integer sleepTime = 1500;
 
     /**
      * 测试连接
@@ -49,23 +58,51 @@ public class HttpService {
         });
     }
 
+    public static String getAuthToken(String url,String param) throws IOException {
+        Connection.Response response = HttpUtils.get(url + authUri+"/"+param);
+        JSONObject result = JSON.parseObject(response.body());
+        if (!result.get("code").equals(0)){
+            throw new SCAException(ErrorEnum.SERVER_REQUEST_FAILURE_ERROR);
+        }
+        return (String) result.get("data");
+    }
+
     /**
      * 下载引擎
      *
      * @param output 输出位置
      * @return
      */
-    public static Void downloadEngine(String output) {
+    public static void downloadEngine(String output) {
+        long beginTime = System.currentTimeMillis();
         Map<String, String> params = new HashMap<>();
         params.put("osName", EngineAssistant.getCurrentOsName());
         params.put("arch", EngineAssistant.getCurrentSystemArch());
         Connection.Response response = getRequest(downloadEngineUri, params, 300 * 1000);
         try {
             FileUtil.writeToFile(new File(output), response.bodyAsBytes());
-        } catch (IOException e) {
+            // 太快了 让慢一点
+            if (System.currentTimeMillis()-beginTime < sleepTime) {
+                Thread.sleep(sleepTime-System.currentTimeMillis()-beginTime);
+            }
+        } catch (IOException | InterruptedException e) {
+            LOG.error(e);
             throw new SCAException(ErrorEnum.ENGINE_DOWNLOAD_ERROR, e.getMessage());
         }
-        return null;
+    }
+
+    /**
+     * 下载默认配置文件
+     * @param configJsonFile
+     */
+    public static void downloadCliConfig(File configJsonFile) {
+        Connection.Response response = getRequest(downloadCliConfig, null, 300 * 1000);
+        try {
+            FileUtil.writeToFile(configJsonFile, response.bodyAsBytes(),true);
+        } catch (IOException e) {
+            LOG.error(e);
+            throw new SCAException(ErrorEnum.ENGINE_DOWNLOAD_ERROR, e.getMessage());
+        }
     }
 
     /**
@@ -95,16 +132,21 @@ public class HttpService {
     }
 
     /**
-     * Get请求
+     * Get请求(去除Token校验)
      *
      * @param uri    请求地址
      * @param params 请求参数
      * @return 响应体
      */
     private static Connection.Response getRequest(String uri, Map<String, String> params, Integer timeout) {
-        String url = OpenSCASettingState.getInstance().getOpenSCASetting().getServerAddress();
-        String token = OpenSCASettingState.getInstance().getOpenSCASetting().getToken();
-        return getRequest(uri, url, token, params, timeout);
+        OpenSCASetting openSCASetting = OpenSCASettingState.getInstance().getOpenSCASetting();
+        String url = BaseUrlRequest;
+        if (openSCASetting!=null){
+            if (StringUtils.isEmpty(openSCASetting.getServerAddress())) {
+                url = openSCASetting.getServerAddress();
+            }
+        }
+        return getRequest(uri, url, null, params, timeout);
     }
 
     /**
@@ -118,7 +160,6 @@ public class HttpService {
      */
     private static Connection.Response getRequest(String uri, String url, String token, Map<String, String> params, Integer timeout) {
         try {
-            VerifyUtils.verifyCertification(url, token);
             Connection.Response response = HttpUtils.get(url + uri + mergeParams(token, params), null, timeout);
             if (response.statusCode() != HttpStatus.SC_OK) {
                 throw new SCAException(ErrorEnum.SERVER_REQUEST_FAILURE_ERROR, Integer.toString(response.statusCode()));
@@ -144,10 +185,23 @@ public class HttpService {
      */
     public static String mergeParams(String token, Map<String, String> params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("?ossToken=").append(token);
-        if (params != null && !params.isEmpty()) {
-            params.forEach((k, v) -> sb.append("&").append(k).append("=").append(v));
+
+        if (StringUtils.isNotEmpty(token)) {
+            sb.append("?ossToken=").append(token);
         }
+
+        if (params != null && !params.isEmpty()) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                sb.append("&").append(key).append("=").append(value);
+            }
+        }
+
+        if (StringUtils.isEmpty(token) && sb.length() > 0) {
+            sb.replace(0, 1, "?");
+        }
+
         return sb.toString();
     }
 }

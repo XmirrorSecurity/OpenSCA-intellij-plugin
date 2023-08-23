@@ -4,10 +4,10 @@ import cn.xmirror.sca.common.OpenSCASettingState;
 import cn.xmirror.sca.ui.Notification;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.ui.MessageType;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.components.ActionLink;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.JBUI;
@@ -119,14 +119,13 @@ public class PaintUtils {
         for (String item : items) {
             final String text = item.trim();
             if (StringUtil.isNotEmpty(item)) {
-                JLabel positionPanel;
+                ActionLink positionPanel;
                 if (buildUrl != null) {
-                    positionPanel = LinkLabel.create(item, () -> {
-                        String url = buildUrl.apply(text);
-                        BrowserUtil.open(url);
-                    });
+                    String url = buildUrl.apply(text);
+                    positionPanel = new ActionLink(item);
+                    positionPanel.addActionListener(e->BrowserUtil.open(url));
                 } else {
-                    positionPanel = new JLabel(text);
+                    positionPanel = new ActionLink(text);
                 }
                 if (currentColumn != startingColumn || (firstSeparator && currentColumn != -1)) {
                     currentColumn++;
@@ -187,7 +186,7 @@ public class PaintUtils {
                 if (StringUtil.isNotEmpty(url)) {
                     BrowserUtil.open(url);
                 } else {
-                    Notification.balloonNotify("请先配置服务器地址", MessageType.WARNING);
+                    Notification.balloonNotify("请先配置服务器地址", NotificationType.WARNING);
                 }
             }
 

@@ -9,11 +9,13 @@ import cn.xmirror.sca.common.dto.Vulnerability;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
 import cn.xmirror.sca.service.CheckService;
+import cn.xmirror.sca.ui.window.ConfigurablePanel;
 import cn.xmirror.sca.ui.window.tree.ComponentTreeNode;
 import cn.xmirror.sca.ui.window.tree.FilePathTreeNode;
 import cn.xmirror.sca.ui.window.tree.RootTreeNode;
 import cn.xmirror.sca.ui.window.tree.VulnerabilityTreeNode;
 import com.alibaba.fastjson.JSON;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import lombok.Data;
 
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
  * @author Yuan Shengjun
  */
 public class ResultParser {
+    private static final Logger LOG = Logger.getInstance(ConfigurablePanel.class);
+
 
     /**
      * 解析结果
@@ -47,6 +51,7 @@ public class ResultParser {
             }
             return generateTree(overview, result.getChildren());
         } catch (IOException e) {
+            LOG.error(e);
             throw new SCAException(ErrorEnum.CHECK_PARSE_RESULT_ERROR);
         }
     }
@@ -115,7 +120,8 @@ public class ResultParser {
             Component cpt = mergeComponents.get(coordinate);
             if (cpt == null) {
                 component.setPaths(component.getPaths());
-                if (component.getPaths().size() == 1) {
+                // 相同组件去重
+                if (component.getPaths().size() >= 1) {
                     String path = component.getPaths().get(0).replace(CheckService.PROJECT_BASE_PATH,"");
                     component.setPath(path.substring(0, path.indexOf("/[")));
                 }

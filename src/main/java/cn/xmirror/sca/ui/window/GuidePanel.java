@@ -77,13 +77,13 @@ public class GuidePanel extends JPanel {
         DefaultMutableTreeNode rootNode = overviewPanel.getRootNode();
         Tree tree = overviewPanel.getTree();
         tree.getSelectionModel().clearSelection();
-        tree.setSelectionPath(new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(rootNode)));
+        tree.setSelectionPath(new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(rootNode.getFirstChild())));
     }
 
     private JPanel getSettingPanel() {
         Icon titleIcon = AllIcons.General.Settings;
         String titleText = "连接配置";
-        String descriptionText = "点击工具栏的“Setting”按钮，点击“Connect OpenSCA”按钮，跳转平台授权后，自动填充Url,Token！";
+        String descriptionText = "点击工具栏的“Setting”按钮，点击“Quick Authentication”按钮，跳转平台授权后，自动填充Url,Token！";
         return getDefaultPanel(titleIcon, titleText, descriptionText);
     }
 

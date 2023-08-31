@@ -65,7 +65,7 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
     }
 
     private void generateTree() {
-        rootNode = new RootTreeNode(new Overview());
+        rootNode = new DefaultMutableTreeNode();
         // 指定一个跟节点创建树
         tree = new Tree(rootNode);
         tree.setRootVisible(false);

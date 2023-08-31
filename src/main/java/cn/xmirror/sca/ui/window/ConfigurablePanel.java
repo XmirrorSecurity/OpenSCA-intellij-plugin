@@ -175,7 +175,8 @@ public class ConfigurablePanel extends JPanel {
     }
 
     private JButton connectOpenSCA(){
-        JButton connectOpenSCA = new JButton("Connect OpenSCA");
+        JButton connectOpenSCA = new JButton("Quick Authorization");
+        connectOpenSCA.setToolTipText("Click to quickly obtain the token for server connection");
         connectOpenSCA.addActionListener(e -> {
             AuthDialog authDialog = new AuthDialog();
             // 运行后台任务 更改文本 进程轮训获取token 修改按钮 取消停止进程
@@ -183,7 +184,6 @@ public class ConfigurablePanel extends JPanel {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     try {
-                        // if (!authDialog.isVisible()) return;
                         Thread.sleep(500);
                         String uuId =UUID.randomUUID().toString();
                         String serverAddress = BASE_URL;

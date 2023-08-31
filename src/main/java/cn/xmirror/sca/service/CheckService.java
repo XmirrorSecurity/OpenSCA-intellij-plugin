@@ -9,7 +9,6 @@ import cn.xmirror.sca.common.dto.Overview;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
 import cn.xmirror.sca.common.pojo.DsnConfig;
-import cn.xmirror.sca.common.pojo.OpenSCASetting;
 import cn.xmirror.sca.common.util.VerifyUtils;
 import cn.xmirror.sca.engine.EngineAssistant;
 import cn.xmirror.sca.ui.Notification;
@@ -17,7 +16,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import org.apache.commons.collections.CollectionUtils;
 
 import javax.swing.tree.MutableTreeNode;
 import java.io.*;
@@ -93,7 +91,7 @@ public class CheckService {
                     return;
                 }
                 // 创建数据源配置文件
-                makeConfigJsonFile(engineCliPath,openSCASettingState.getOpenSCASetting());
+                makeConfigJsonFile(engineCliPath);
 
                 String inputPath = project.getBasePath();
 
@@ -183,7 +181,7 @@ public class CheckService {
      * FileWriter很坑 创建对象默认清空文件(顺序不要发生改变)
      * @param engineCliPath
      */
-    private static void makeConfigJsonFile(String engineCliPath, OpenSCASetting openSCASetting) throws IOException {
+    private static void makeConfigJsonFile(String engineCliPath) throws IOException {
         try {
             String cliParentFilePath = new File(engineCliPath).getParentFile().getAbsolutePath();
             File configJsonFile = new File(cliParentFilePath + File.separator + "config.json");
@@ -191,7 +189,7 @@ public class CheckService {
                 HttpService.downloadCliConfig(configJsonFile);
             }
             List<DsnConfig> dsnConfigList = openSCASettingState.getOpenSCASetting().getDsnConfigList();
-            if (CollectionUtils.isEmpty(dsnConfigList)) return;
+            // 收集已勾选的配置文件 写入JSON
             List<DsnConfig> collect = dsnConfigList.stream().filter(item -> item.getSelect().equals(Boolean.TRUE)).collect(Collectors.toList());
             String configJson = Origin.buildDsnJson(configJsonFile, collect);
             FileWriter fileWriter = new FileWriter(configJsonFile);

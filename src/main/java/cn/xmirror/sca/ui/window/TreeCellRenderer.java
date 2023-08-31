@@ -10,6 +10,7 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import icons.Icons;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -48,7 +49,12 @@ public class TreeCellRenderer extends ColoredTreeCellRenderer {
             attributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
         } else {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            text = node.getUserObject().toString();
+            // 结果树的顶层根节点为空
+            if (StringUtils.isEmpty(value.toString())) {
+                return;
+            }else {
+                text = node.getUserObject().toString();
+            }
         }
 
         setIcon(nodeIcon);

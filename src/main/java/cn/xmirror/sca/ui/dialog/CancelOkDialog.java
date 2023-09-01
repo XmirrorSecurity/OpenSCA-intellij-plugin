@@ -56,7 +56,7 @@ public class CancelOkDialog extends DialogWrapper {
             String selectedValue = (String) dataSourceComboBox.getSelectedItem();
             if ("JSON".equals(selectedValue)) {
                 HelpTooltip dataSourceHelpTooltip = new HelpTooltip();
-                dataSourceHelpTooltip.setDescription("数据源配置，如:/Users/xingluheng/Desktop/origin.sql");
+                dataSourceHelpTooltip.setDescription("数据源配置，如:/Users/openSCA/Desktop/origin.sql");
                 dataSourceHelpTooltip.installOn(dsnTextField);
                 tableLabel.setVisible(false);
                 tableNameTextField.setVisible(false);

@@ -2,6 +2,7 @@ package cn.xmirror.sca.service;
 
 import cn.xmirror.sca.common.OpenSCASettingState;
 import cn.xmirror.sca.common.SCAThreadPool;
+import cn.xmirror.sca.common.dto.AuthResult;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
 import cn.xmirror.sca.common.pojo.OpenSCASetting;
@@ -32,7 +33,7 @@ public class HttpService {
 
 
     private static final String BaseUrlRequest = "https://opensca.xmirror.cn";
-    private static final String testConnectionUri = "/oss-saas/api-v1/oss-token/test";
+    public static final String testConnectionUri = "/oss-saas/api-v1/oss-token/test";
     private static final String authUri = "/oss-saas/api-v1/oss-token/get/auth";
     private static final String downloadEngineUri = "/oss-saas/api-v1/ide-plugin/open-sca-cli/download";
     private static final String getEngineVersionUri = "/oss-saas/api-v1/ide-plugin/open-sca-cli/version";
@@ -58,13 +59,29 @@ public class HttpService {
         });
     }
 
+    /**
+     * 获取认证结果
+     * @param url
+     * @param param
+     * @return ""->一直未点击认证按钮 error->用户之前没有生成token
+     * @throws IOException
+     */
     public static String getAuthToken(String url,String param) throws IOException {
         Connection.Response response = HttpUtils.get(url + authUri+"/"+param);
         JSONObject result = JSON.parseObject(response.body());
         if (!result.get("code").equals(0)){
             throw new SCAException(ErrorEnum.SERVER_REQUEST_FAILURE_ERROR);
         }
-        return (String) result.get("data");
+        AuthResult authResult = result.getObject("data", AuthResult.class);
+        if (authResult.getCode()==HttpStatus.SC_NOT_FOUND) {
+            return "";
+        }else if (authResult.getCode()==HttpStatus.SC_UNAUTHORIZED){
+            return "error";
+        }else if (authResult.getCode()==HttpStatus.SC_OK){
+            return authResult.getToken();
+        }else {
+            return "";
+        }
     }
 
     /**
@@ -158,7 +175,7 @@ public class HttpService {
      * @param params 其他参数
      * @return 响应体
      */
-    private static Connection.Response getRequest(String uri, String url, String token, Map<String, String> params, Integer timeout) {
+    public static Connection.Response getRequest(String uri, String url, String token, Map<String, String> params, Integer timeout) {
         try {
             Connection.Response response = HttpUtils.get(url + uri + mergeParams(token, params), null, timeout);
             if (response.statusCode() != HttpStatus.SC_OK) {

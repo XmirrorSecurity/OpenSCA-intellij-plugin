@@ -79,6 +79,7 @@ public class CheckService {
                 String token = openSCASettingState.getOpenSCASetting().getToken();
                 if (!openSCASettingState.getOpenSCASetting().getRemoteDataSourceSelected()) token = "";
                 VerifyUtils.verifyUrl(url);
+                VerifyUtils.verifyToken(url,token);
                 // 提交任务
                 String engineCliPath = EngineAssistant.getEngineCliPath();
                 String outputPath = EngineAssistant.getCheckResultPath(project);

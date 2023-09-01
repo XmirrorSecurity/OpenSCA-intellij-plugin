@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>cn.xmirror.sca.xcheck.test</id>
+    <id>cn.xmirror.sca.xcheck</id>
     <name>OpenSCA Xcheck</name>
     <vendor email="services@anpro-tech.com" url="https://www.xmirror.cn/">Xmirror</vendor>
 

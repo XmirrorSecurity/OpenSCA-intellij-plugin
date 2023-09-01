@@ -93,17 +93,17 @@ public class AuthDialog extends DialogWrapper {
     /**
      * 进行服务器授权认证
      * @param htmlLink 服务器根地址
-     * @return
+     * @return 正确token|error
      */
     public String getAuth(String htmlLink,String param) {
         String authToken = "";
         while (!authCancel){
             try {
+                Thread.sleep(3000);
                 authToken = HttpService.getAuthToken(htmlLink, param);
                 if (StringUtils.isNotEmpty(authToken)){
                     authCancel = true;
                 }
-                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (IOException | SCAException e) {

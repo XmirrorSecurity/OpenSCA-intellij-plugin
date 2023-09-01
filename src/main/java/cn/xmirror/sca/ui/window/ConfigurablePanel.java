@@ -31,7 +31,6 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import icons.Icons;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -67,19 +66,19 @@ public class ConfigurablePanel extends JPanel {
 
 
     public ConfigurablePanel() {
-        this(BASE_URL, "", false, "", true,false,Collections.emptyList());
+        this(BASE_URL, "", false, "", true, false, Collections.emptyList());
     }
 
-    public ConfigurablePanel(String url, String token, boolean useCustomerCli, String cliPath,Boolean remoteDataSourceSelected,Boolean localDataSourceSelected,List<DsnConfig> dsnConfigList) {
+    public ConfigurablePanel(String url, String token, boolean useCustomerCli, String cliPath, Boolean remoteDataSourceSelected, Boolean localDataSourceSelected, List<DsnConfig> dsnConfigList) {
         super(new BorderLayout());
-        add(getCertificatePanel(url, token,remoteDataSourceSelected), BorderLayout.NORTH);
+        add(getCertificatePanel(url, token, remoteDataSourceSelected), BorderLayout.NORTH);
         Project currentProject = ProjectManager.getInstance().getDefaultProject();
-        dsnListPanel = new DsnListPanel(currentProject,localDataSourceSelected,dsnConfigList);
-        add(dsnListPanel,BorderLayout.CENTER);
+        dsnListPanel = new DsnListPanel(currentProject, localDataSourceSelected, dsnConfigList);
+        add(dsnListPanel, BorderLayout.CENTER);
         add(executableSettingPanel(useCustomerCli, cliPath), BorderLayout.SOUTH);
     }
 
-    public JPanel getCertificatePanel(String url, String token,Boolean remoteDataSourceSelected) {
+    public JPanel getCertificatePanel(String url, String token, Boolean remoteDataSourceSelected) {
         JPanel panel = new JPanel(new GridLayoutManager(4, 2));
 
         JLabel urlLabel = new JLabel("URL");
@@ -102,7 +101,7 @@ public class ConfigurablePanel extends JPanel {
 
         remoteDataSourceCheckBox = new JCheckBox("Remote Data Source");
         remoteDataSourceCheckBox.setSelected(remoteDataSourceSelected);
-        if (!remoteDataSourceSelected){
+        if (!remoteDataSourceSelected) {
             urlText.setEnabled(false);
             tokenText.setEnabled(false);
         }
@@ -174,29 +173,28 @@ public class ConfigurablePanel extends JPanel {
         return panel;
     }
 
-    private JButton connectOpenSCA(){
+    private JButton connectOpenSCA() {
         JButton connectOpenSCA = new JButton("Quick Authorization");
         connectOpenSCA.setToolTipText("Click to quickly obtain the token for server connection");
         connectOpenSCA.addActionListener(e -> {
             AuthDialog authDialog = new AuthDialog();
             // 运行后台任务 更改文本 进程轮训获取token 修改按钮 取消停止进程
-            Task.Backgroundable authenticationTask = new Task.Backgroundable(null, "Authenticating OpenSCA Plugin",true) {
+            Task.Backgroundable authenticationTask = new Task.Backgroundable(null, "Authenticating OpenSCA Plugin", true) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     try {
                         Thread.sleep(500);
-                        String uuId =UUID.randomUUID().toString();
+                        String uuId = UUID.randomUUID().toString();
                         String serverAddress = BASE_URL;
                         OpenSCASetting openSCASetting = OpenSCASettingState.getInstance().getOpenSCASetting();
-                        if (openSCASetting!=null){
+                        if (openSCASetting != null) {
                             serverAddress = openSCASetting.getServerAddress();
                         }
-
-                        String htmlLink = serverAddress+ AUTH_URL+"?tokenid="+uuId+"&from=idea";
+                        String htmlLink = serverAddress + AUTH_URL + "?tokenid=" + uuId + "&from=idea";
                         String htmlText =
                                 "<html><body>\n" +
                                         "We are now redirecting you to our auth page, go ahead and log in.<br><br>\n" +
-                                        "Once the authentication is complete, return to the IDE and you'll be ready to start using Snyk.<br><br>\n" +
+                                        "Once the authentication is complete, return to the IDE and you'll be ready to start using OpenSCA.<br><br>\n" +
                                         "If a browser window doesn't open after a few seconds, please <a href=\"" + htmlLink + "\">click here</a>\n" +
                                         "or copy the url using the button below and manually paste it in a browser.\n" +
                                         "</body></html>";
@@ -205,14 +203,16 @@ public class ConfigurablePanel extends JPanel {
                         authDialog.copyUrlAction.setEnabled(true);
                         authDialog.setOKActionEnabled(false);
                         Desktop.getDesktop().browse(URI.create(htmlLink));
-                        String token = authDialog.getAuth(serverAddress,uuId);
-                        if (StringUtils.isNotEmpty(token)) {
+                        String token = authDialog.getAuth(serverAddress, uuId);
+                        if ("error".equals(token)) {
+                            authDialog.updateHtmlText("<h3>Authenticating failure,Please generate token first</h3>");
+                        } else {
                             authDialog.updateHtmlText("<h2>Authenticating Success</h2>");
-                            authDialog.setOKActionEnabled(true);
-                            urlText.setText("https://opensca.xmirror.cn");
                             tokenText.setText(token);
                         }
-                    } catch (InterruptedException |IOException | SCAException ex) {
+                        authDialog.setOKActionEnabled(true);
+                        urlText.setText("https://opensca.xmirror.cn");
+                    } catch (InterruptedException | IOException | SCAException ex) {
                         ex.printStackTrace();
                         LOG.error(ex);
                         Notification.balloonNotify("Authentication Failed", NotificationType.ERROR);
@@ -269,8 +269,8 @@ public class ConfigurablePanel extends JPanel {
     private void downLoadCliAndUpdateText(String type) {
         try {
             if (ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    ()-> HttpService.downloadEngine(EngineAssistant.getEngineCliPath()),type+"OpenSCA命令行工具", false,
-                    ProjectManager.getInstance().getDefaultProject(),this.getRootPane())) {
+                    () -> HttpService.downloadEngine(EngineAssistant.getEngineCliPath()), type + "OpenSCA命令行工具", false,
+                    ProjectManager.getInstance().getDefaultProject(), this.getRootPane())) {
                 String version = HttpService.getRemoteServerCliVersion();
                 FileUtil.writeToFile(new File(EngineAssistant.getEngineVersionPath()), version);
                 // 设置引擎执行权限
@@ -285,7 +285,7 @@ public class ConfigurablePanel extends JPanel {
         } catch (SCAException | IOException exception) {
             versionLabel.setIcon(Icons.FAILED);
             versionLabel.setText("OpenSCA CLI Downloads Error");
-            LOG.error("###引擎下载失败###"+exception);
+            LOG.error("###引擎下载失败###" + exception);
         }
     }
 

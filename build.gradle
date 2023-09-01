@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'cn.xmirror.sca'
-version '1.0.4'
+version '1.0.3'
 
 repositories {
     mavenCentral()
@@ -22,10 +22,12 @@ intellij {
 }
 patchPluginXml {
     version = project.version
-    sinceBuild = '203'
+    sinceBuild = '212.*'
     untilBuild = '232.*'
     changeNotes = """
         <ui>
+            <li>增加多数据源、自定义cli配置</li>   
+            <li>优化漏洞结果展示</li>  
             <li>修复Unix系统下命令行工具执行失败</li>
         </ui>
     """

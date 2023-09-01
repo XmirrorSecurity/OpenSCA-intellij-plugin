@@ -50,7 +50,7 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
         this.contentPanel = contentPanel;
         generateTree();
         setToolbar(levelFilterBar());
-        tree.getEmptyText().setText("Please Executable Vulnerability Analyse");
+        tree.getEmptyText().setText("Run the detection and check the results here");
         setContent(PaintUtils.wrapWithScrollPanel(tree));
     }
 

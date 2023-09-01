@@ -16,6 +16,7 @@ public enum ErrorEnum {
     SETTING_URL_EMPTY_ERROR(40021, "url不能为空"),
     SETTING_TOKEN_EMPTY_ERROR(40022, "token不能为空"),
     SETTING_URL_PATTERN_ERROR(40023, "url格式错误"),
+    SETTING_TOKEN_EXPIRE(40024, "OSS令牌已过期"),
 
     // 引擎相关
     ENGINE_UNSUPPORTED_SYSTEM_ERROR(40041, "不支持此操作系统"),

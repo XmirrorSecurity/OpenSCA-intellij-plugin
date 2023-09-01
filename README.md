@@ -28,7 +28,7 @@
 
 以IntelliJ IDEA为例：将下载下来的插件安装包拖入适配的IDE中即可
 
-**安装方法三**：[下载源码](https://github.com/Xmirror-DevSecOps/OpenSCA-intellij-plugin )自行编译安装
+**安装方法三**：[下载源码](https://github.com/XmirrorSecurity/OpenSCA-intellij-plugin )自行编译安装
 
 使用IntelliJ IDEA打开下载到本地的源码，需要配置运行环境：`jDK11`，待Gradle导入依赖和插件，在Gradle中执行`intellij`插件的`buildPlugin`任务，构建的安装包存放于当前项目下*build/distributions*目录下，将此目录下的安装包拖入当前IDE中即可
 

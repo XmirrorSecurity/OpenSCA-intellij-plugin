@@ -2,9 +2,13 @@ package cn.xmirror.sca.common.util;
 
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
+import cn.xmirror.sca.service.HttpService;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.internal.StringUtil;
 
 import java.util.regex.Pattern;
+
+import static cn.xmirror.sca.service.HttpService.testConnectionUri;
 
 /**
  * 验证工具类
@@ -25,4 +29,13 @@ public class VerifyUtils {
         }
     }
 
+    public static void verifyToken(String url,String token) {
+        if (StringUtils.isEmpty(token)) return;
+        try {
+            HttpService.getRequest(testConnectionUri, url, token, null, 5000);
+        } catch (Exception e) {
+            throw new SCAException(ErrorEnum.SETTING_TOKEN_EXPIRE);
+        }
+
+    }
 }

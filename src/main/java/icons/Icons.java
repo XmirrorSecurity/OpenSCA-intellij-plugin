@@ -11,7 +11,7 @@ public class Icons {
      */
     public static final Icon XMIRROR_LOGO = IconLoader.getIcon("/icons/xmirror_logo.png",Icons.class);
     public static final Icon XMIRROR_LOGO_24 = IconLoader.getIcon("/icons/xmirror_logo_24.png",Icons.class);
-    public static final Icon OSS_LOGO = IconLoader.getIcon("/icons/oss_logo.png",Icons.class);
+    public static final Icon OPEN_SCA_LOGO = IconLoader.getIcon("/icons/open_sca.svg",Icons.class);
 
     /**
      * 展示面板

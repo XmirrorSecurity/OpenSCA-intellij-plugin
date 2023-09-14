@@ -1,6 +1,6 @@
 ![Version](https://img.shields.io/jetbrains/plugin/v/18246)
 ![Downloads](https://img.shields.io/jetbrains/plugin/d/18246)
-![Rating](https://img.shields.io/jetbrains/plugin/r/rating/18246)
+![Rating](https://img.shields.io/jetbrains/plugin/r/stars/18246)
 ![License](https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin)
 
 <!--

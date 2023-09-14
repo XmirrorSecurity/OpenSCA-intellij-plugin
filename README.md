@@ -1,3 +1,8 @@
+![Version](https://img.shields.io/jetbrains/plugin/v/18246)
+![Downloads](https://img.shields.io/jetbrains/plugin/d/18246)
+![Rating](https://img.shields.io/jetbrains/plugin/r/rating/18246)
+![License](https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin)
+
 <!--
 <p align="center">
 	<img alt="logo" src="https://opensca-test.xmirror.cn/static/media/OpenSCAlogo.e980a0f9.svg">
@@ -9,12 +14,6 @@
 	<a href="https://github.com/XmirrorSecurity/OpenSCA-intellij-plugin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin?style=flat-square"></a>
 	<a href="https://github.com/XmirrorSecurity/OpenSCA-intellij-plugin/releases"><img src="https://img.shields.io/github/v/release/XmirrorSecurity/OpenSCA-intellij-plugin?style=flat-square"></a>
 </p> -->
-
-![Version](https://img.shields.io/jetbrains/plugin/v/18246)
-![Downloads](https://img.shields.io/jetbrains/plugin/d/18246)
-![Rating](https://img.shields.io/jetbrains/plugin/r/rating/18246)
-![License](https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin)
-
 
 ---
 

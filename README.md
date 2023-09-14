@@ -1,6 +1,8 @@
+<!--
 <p align="center">
 	<img alt="logo" src="https://opensca-test.xmirror.cn/static/media/OpenSCAlogo.e980a0f9.svg">
 </p>
+-->
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">OpenSCA Xcheck</h1>
 <h4 align="center">IntelliJ平台的OpenSCA Xcheck插件，让代码更安全</h4>
 <p align="center">

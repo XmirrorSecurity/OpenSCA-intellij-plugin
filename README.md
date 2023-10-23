@@ -1,29 +1,23 @@
-![Version](https://img.shields.io/jetbrains/plugin/v/18246)
-![Downloads](https://img.shields.io/jetbrains/plugin/d/18246)
-![Rating](https://img.shields.io/jetbrains/plugin/r/stars/18246)
-![License](https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin)
+[![Version](https://img.shields.io/jetbrains/plugin/v/18246)](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/18246)](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck)
+[![Rating](https://img.shields.io/jetbrains/plugin/r/stars/18246)](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck)
+[![License](https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin)](https://github.com/XmirrorSecurity/OpenSCA-intellij-plugin/blob/master/LICENSE)
 
-<!--
 <p align="center">
-	<img alt="logo" src="https://opensca-test.xmirror.cn/static/media/OpenSCAlogo.e980a0f9.svg">
+	<img alt="logo" src="https://opensca.xmirror.cn/docs/img/OpenSCAlogo.png">
 </p>
--->
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">OpenSCA Xcheck</h1>
 <h4 align="center">IntelliJ平台的OpenSCA Xcheck插件，让代码更安全</h4>
-<!-- <p align="center">
-	<a href="https://github.com/XmirrorSecurity/OpenSCA-intellij-plugin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/XmirrorSecurity/OpenSCA-intellij-plugin?style=flat-square"></a>
-	<a href="https://github.com/XmirrorSecurity/OpenSCA-intellij-plugin/releases"><img src="https://img.shields.io/github/v/release/XmirrorSecurity/OpenSCA-intellij-plugin?style=flat-square"></a>
-</p> -->
 
 ---
 
 ## 项目介绍
 
-[Xcheck](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck )是基于IntelliJ平台的OpenSCA插件。Xcheck能对当前项目进行代码质量评估，并在可视化界面中展示评估结果。评估结果包括漏洞和有漏洞的组件的统计数、具体组件信息和相关漏洞信息。
+[Xcheck](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck)是基于IntelliJ平台的OpenSCA插件。Xcheck能对当前项目进行代码质量评估，并在可视化界面中展示评估结果。评估结果包括漏洞和有漏洞的组件的统计数、具体组件信息和相关漏洞信息。
 
 ## 安装插件
 
-**安装方法一**：在[适配的IDE](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck#:~:text=Code%20tools%2C%20Security-,Product%20Compatibility,-Determined%20by%20plugin)中通过插件市场安装（推荐）
+**安装方法一**：从 [Jetbrains 插件市场](https://plugins.jetbrains.com/plugin/18246-opensca-xcheck) 中安装（推荐）
 
 以IntelliJ IDEA为例：在IDE中依次点击“File|Settings|Plugins|Marketplace”，在搜索框中输入“OpenSCA Xcheck”，点击“Install”
 

@@ -24,6 +24,9 @@ public class Icons {
     public static final Icon VUL_STATISTICS = IconLoader.getIcon("/icons/vul_statistics_20.svg",Icons.class);
     public static final Icon LICENSE_STATISTICS = IconLoader.getIcon("/icons/license_statistics_20.svg",Icons.class);
 
+    public static final Icon UPLOAD_SAAS = IconLoader.getIcon("/actions/upload.png",Icons.class);
+
+
     /**
      * 危险级别
      */
@@ -35,6 +38,7 @@ public class Icons {
     public static final Icon LOW_24 = IconLoader.getIcon("/icons/severity_low_24.svg",Icons.class);
     public static final Icon MEDIUM = IconLoader.getIcon("/icons/severity_medium.svg",Icons.class);
     public static final Icon MEDIUM_24 = IconLoader.getIcon("/icons/severity_medium_24.svg",Icons.class);
+    public static final Icon SEC = IconLoader.getIcon("/icons/sec.svg",Icons.class);
     private static final Icon NO_RATING = IconLoader.getIcon("/icons/severity_no_rating.svg",Icons.class);
     private static final Icon NO_RATING_24 = IconLoader.getIcon("/icons/severity_no_rating_24.svg",Icons.class);
 
@@ -70,6 +74,8 @@ public class Icons {
         } else if (securityLevel == SecurityLevelEnum.LOW.getLevel()) {
             if (iconSize == IconSize.SIZE16) icon = LOW;
             if (iconSize == IconSize.SIZE24) icon = LOW_24;
+        }else if (securityLevel == SecurityLevelEnum.SEC.getLevel()) {
+            icon = SEC;
         }
         return icon;
     }

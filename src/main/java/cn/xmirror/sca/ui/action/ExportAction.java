@@ -1,7 +1,7 @@
 package cn.xmirror.sca.ui.action;
 
 import cn.xmirror.sca.engine.EngineAssistant;
-import cn.xmirror.sca.ui.Notification;
+import cn.xmirror.sca.ui.NotificationUtils;
 import cn.xmirror.sca.ui.window.OverviewPanel;
 import cn.xmirror.sca.ui.window.ToolWindowContentPanel;
 import cn.xmirror.sca.ui.window.ToolWindowMainPanel;
@@ -31,16 +31,16 @@ public class ExportAction extends AnAction implements DumbAware {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        String checkResultPath = EngineAssistant.getCheckResultPath(e.getProject());
+        String checkResultPath = EngineAssistant.getCheckResultJsonPath(e.getProject());
         File file = new File(checkResultPath);
         if (file.exists()){
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                Notification.balloonNotify(ex.getMessage(),  NotificationType.ERROR);
+                NotificationUtils.balloonNotify(ex.getMessage(),  NotificationType.ERROR);
             }
         }else {
-            Notification.balloonNotify("检测结果文件未找到",  NotificationType.ERROR);
+            NotificationUtils.balloonNotify("检测结果文件未找到",  NotificationType.ERROR);
         }
     }
 

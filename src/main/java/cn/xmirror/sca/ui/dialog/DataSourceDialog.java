@@ -21,12 +21,12 @@ import java.util.List;
  * @author xingluheng
  * @date 2023/08/14 11:49
  **/
-public class CancelOkDialog extends DialogWrapper {
+public class DataSourceDialog extends DialogWrapper {
     private ComboBox<String> dataSourceComboBox;
     private JBTextField tableNameTextField;
     private JTextArea dsnTextField;
 
-    public CancelOkDialog(@Nullable Project project, String title) {
+    public DataSourceDialog(@Nullable Project project, String title) {
         super(project, false);
         init();
         setTitle(title);

@@ -1,6 +1,7 @@
 package cn.xmirror.sca.ui.window;
 
 import cn.xmirror.sca.common.dto.Component;
+import cn.xmirror.sca.service.CheckService;
 import com.alibaba.fastjson.JSONObject;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -15,6 +16,7 @@ import icons.Icons;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 public class DescriptionComponentPanel extends JPanel {
@@ -94,12 +96,17 @@ public class DescriptionComponentPanel extends JPanel {
             panel.add(componentPosition, MyGridConstraints.gridBuilder(i * 2 + 1).setIndent(0).build());
 
             String path = paths.get(i);
-            String p = path.substring(0, path.indexOf("/["));
-
+            String p = path;
+            if (path.contains("[")) {
+                p = path.substring(0, path.indexOf("[")-1);
+            }
             ActionLink actionLink = new ActionLink(p);
-            VirtualFile file = fileSystem.findFileByPath(p);
-            actionLink.addActionListener(getActionLinkListener(editorManager, file));
-
+            String projectBasePath = CheckService.PROJECT_BASE_PATH;
+            if (p.contains(File.separator)){
+                String filePath = projectBasePath + p.substring(p.indexOf(File.separator));
+                VirtualFile file = fileSystem.findFileByPath(filePath);
+                actionLink.addActionListener(getActionLinkListener(editorManager, file));
+            }
             panel.add(actionLink, MyGridConstraints.gridBuilder(i * 2).setIndent(0).setColumn(1).build());
             panel.add(new JBLabel(getDependencies(path), UIUtil.ComponentStyle.LARGE), MyGridConstraints.gridBuilder(i * 2 + 1).setIndent(0).setColumn(1).build());
         }

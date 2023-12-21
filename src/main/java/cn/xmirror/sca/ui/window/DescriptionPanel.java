@@ -9,13 +9,18 @@ public class DescriptionPanel extends SimpleToolWindowPanel {
 
     private Project project;
     private ToolWindowContentPanel contentPanel;
+    private GuidePanel guidePanel;
 
     public DescriptionPanel(Project project, ToolWindowContentPanel contentPanel) {
         super(true,true);
         this.project = project;
         this.contentPanel = contentPanel;
-        GuidePanel guidePanel = new GuidePanel(project, contentPanel.getOverviewPanel());
+        guidePanel = new GuidePanel(project, contentPanel.getOverviewPanel());
         setDetailDescriptionPanel(guidePanel);
+    }
+
+    public GuidePanel getGuidePanel() {
+        return guidePanel;
     }
 
     public void setDetailDescriptionPanel(JPanel panel) {

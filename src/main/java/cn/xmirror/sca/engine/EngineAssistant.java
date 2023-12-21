@@ -66,16 +66,30 @@ public class EngineAssistant {
     }
 
     /**
-     * 获取检测结果保存路径
+     * 获取检测Json文件结果保存路径
      *
      * @return
      */
-    public static String getCheckResultPath(Project project) {
+    public static String getCheckResultJsonPath(Project project) {
         String dirPath = EngineAssistant.getDefaultResultDataDirectory();
         if (!FileUtil.createDirectory(new File(dirPath))) {
             throw new SCAException(ErrorEnum.CREATE_DIR_ERROR, dirPath);
         }
         return dirPath + File.separator + ProjectIdentity.checkOrSignature(project) + ".json";
+    }
+
+    /**
+     * 获取检测Dsdx文件结果保存路径
+     *
+     * @param project
+     * @return
+     */
+    public static String getCheckResultDsdxPath(Project project){
+        String dirPath = EngineAssistant.getDefaultResultDataDirectory();
+        if (!FileUtil.createDirectory(new File(dirPath))) {
+            throw new SCAException(ErrorEnum.CREATE_DIR_ERROR, dirPath);
+        }
+        return dirPath + File.separator + ProjectIdentity.checkOrSignature(project) + ".dsdx";
     }
 
     /**

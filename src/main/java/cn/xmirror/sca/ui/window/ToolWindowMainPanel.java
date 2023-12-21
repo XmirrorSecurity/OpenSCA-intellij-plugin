@@ -1,7 +1,7 @@
 package cn.xmirror.sca.ui.window;
 
 import cn.xmirror.sca.common.CheckListener;
-import cn.xmirror.sca.ui.Notification;
+import cn.xmirror.sca.ui.NotificationUtils;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -59,6 +59,7 @@ public class ToolWindowMainPanel extends JPanel implements Disposable, CheckList
     @Override
     public void clean() {
         contentPanel.getOverviewPanel().render(null);
+        contentPanel.getDescriptionPanel().getGuidePanel().setVisible(true);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class ToolWindowMainPanel extends JPanel implements Disposable, CheckList
 
     @Override
     public void onError(Exception e) {
-        Notification.balloonNotify(e.getMessage(), NotificationType.ERROR);
+        NotificationUtils.balloonNotify(e.getMessage(), NotificationType.ERROR);
     }
 
     @Override

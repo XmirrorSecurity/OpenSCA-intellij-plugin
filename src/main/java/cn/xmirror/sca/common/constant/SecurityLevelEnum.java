@@ -1,7 +1,5 @@
 package cn.xmirror.sca.common.constant;
 
-import java.util.Set;
-
 /**
  * 风险等级枚举类
  *
@@ -12,6 +10,7 @@ public enum SecurityLevelEnum {
     HIGH(2, "高危"),
     MEDIUM(3, "中危"),
     LOW(4, "低危"),
+    SEC(5,"安全")
     ;
 
     private final int level;

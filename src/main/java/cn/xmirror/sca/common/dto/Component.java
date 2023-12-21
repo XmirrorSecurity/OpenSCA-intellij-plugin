@@ -61,4 +61,9 @@ public class Component implements Serializable {
      * 依赖类型 true直接 false间接
      */
     private boolean direct;
+
+    /**
+     * 子children
+     */
+    private List<Component> children;
 }

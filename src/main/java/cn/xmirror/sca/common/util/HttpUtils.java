@@ -260,8 +260,7 @@ public class HttpUtils {
                 connection.data(paramMap);
             }
 
-            Response response = connection.execute();
-            return response;
+            return connection.execute();
         }
 
         // 关闭上传文件的输入流

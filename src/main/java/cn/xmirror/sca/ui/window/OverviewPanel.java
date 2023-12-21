@@ -8,6 +8,7 @@ import cn.xmirror.sca.common.dto.Overview;
 import cn.xmirror.sca.common.dto.Vulnerability;
 import cn.xmirror.sca.engine.EngineAssistant;
 import cn.xmirror.sca.service.CheckService;
+import cn.xmirror.sca.ui.dialog.SyncResultDialog;
 import cn.xmirror.sca.ui.window.tree.ComponentTreeNode;
 import cn.xmirror.sca.ui.window.tree.FilePathTreeNode;
 import cn.xmirror.sca.ui.window.tree.RootTreeNode;
@@ -18,14 +19,19 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.JBMenuItem;
+import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.Alarm;
+import icons.Icons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,13 +60,13 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
         setContent(PaintUtils.wrapWithScrollPanel(tree));
     }
 
-    private @NotNull JPanel levelFilterBar(){
+    private @NotNull JPanel levelFilterBar() {
         JPanel severityToolbarPanel = new JPanel(new BorderLayout());
         severityToolbarPanel.add(new JLabel(" Severity: "), BorderLayout.WEST);
         ActionManager actionManager = ActionManager.getInstance();
         ActionGroup actionGroup = (ActionGroup) actionManager.getAction("cn.xmirror.sca.LevelFilterBar");
         JComponent component = new ActionToolbarImpl("OpenSCA", actionGroup, true);
-        severityToolbarPanel.add(component,BorderLayout.CENTER);
+        severityToolbarPanel.add(component, BorderLayout.CENTER);
         return severityToolbarPanel;
     }
 
@@ -73,6 +79,40 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
         tree.setCellRenderer(new TreeCellRenderer());
         // 树的选择事件
         tree.addTreeSelectionListener(e -> ApplicationManager.getApplication().invokeLater(this::updateDescriptionPanelBySelectedTreeNode));
+        // 树的右键选择事件
+        tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handleRightClickEvent(e);
+            }
+        });
+    }
+
+
+    /**
+     * 处理组件漏洞树右键监听事件
+     *
+     * @param e
+     */
+    private void handleRightClickEvent(MouseEvent e) {
+        JBPopupMenu jbPopupMenu = new JBPopupMenu();
+        jbPopupMenu.setBorder(BorderFactory.createEmptyBorder());
+
+        if (SwingUtilities.isRightMouseButton(e)) {
+            TreePath selectionPath = tree.getSelectionPath();
+            if (selectionPath != null) {
+                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+                // 可以根据treeNode.getChildCount()是否大于0判断 组件OR漏洞
+                JBMenuItem uploadSaas = new JBMenuItem("Upload Saas", Icons.UPLOAD_SAAS);
+                uploadSaas.addActionListener(actionEvent -> {
+                    jbPopupMenu.add(uploadSaas);
+                    SyncResultDialog syncResultDialog = new SyncResultDialog(project);
+                    syncResultDialog.show();
+                });
+                jbPopupMenu.add(uploadSaas);
+            }
+            jbPopupMenu.show(tree, e.getX(), e.getY() + 10); // 显示弹出菜单
+        }
     }
 
     private void updateDescriptionPanelBySelectedTreeNode() {
@@ -119,7 +159,7 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
         tree.getSelectionModel().clearSelection();
         // 展开根节点
         TreePath treePath = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(rootNode));
-        expandNode(tree,rootNode,treePath,3);
+        expandNode(tree, rootNode, treePath, 3);
         // 刷新树
         SwingUtilities.invokeLater(() -> tree.updateUI());
     }
@@ -150,7 +190,7 @@ public class OverviewPanel extends SimpleToolWindowPanel implements Disposable {
         if (displayingLow) {
             severityLevels.add(SecurityLevelEnum.LOW.getLevel());
         }
-        String outputPath = EngineAssistant.getCheckResultPath(project);
+        String outputPath = EngineAssistant.getCheckResultJsonPath(project);
         if (rootNode.getChildCount() == 0) {
             return;
         }

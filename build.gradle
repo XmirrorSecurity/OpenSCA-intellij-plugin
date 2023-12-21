@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'cn.xmirror.sca'
-version '1.0.3'
+version '1.0.4'
 
 repositories {
     mavenCentral()
@@ -14,6 +14,8 @@ dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
+
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -23,7 +25,7 @@ intellij {
 patchPluginXml {
     version = project.version
     sinceBuild = '212.*'
-    untilBuild = '232.*'
+    untilBuild = '233.*'
     changeNotes = """
         <ui>
             <li>增加多数据源、自定义cli配置</li>   

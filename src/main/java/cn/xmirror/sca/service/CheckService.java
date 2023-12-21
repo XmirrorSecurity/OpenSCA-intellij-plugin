@@ -8,10 +8,10 @@ import cn.xmirror.sca.common.dto.Origin;
 import cn.xmirror.sca.common.dto.Overview;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
-import cn.xmirror.sca.common.pojo.DsnConfig;
 import cn.xmirror.sca.common.util.VerifyUtils;
 import cn.xmirror.sca.engine.EngineAssistant;
-import cn.xmirror.sca.ui.Notification;
+import cn.xmirror.sca.engine.EngineDownloader;
+import cn.xmirror.sca.ui.NotificationUtils;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -21,11 +21,9 @@ import javax.swing.tree.MutableTreeNode;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * 检测服务类
@@ -70,37 +68,43 @@ public class CheckService {
             try {
                 listener.progress(true);
                 clean(project, listener);
-                // 检测前版本检查改为用户手动 EngineDownloader.checkAndDownload(project);
-                if (openSCASettingState.getOpenSCASetting() ==null) {
-                    Notification.balloonNotify("请配置OpenSCA后,再进行检测", NotificationType.ERROR);
+                if (openSCASettingState.getOpenSCASetting() == null) {
+                    NotificationUtils.balloonNotify("请配置OpenSCA后,再进行检测", NotificationType.ERROR);
                     return;
                 }
+                // URL和Token 参数校验
                 String url = openSCASettingState.getOpenSCASetting().getServerAddress();
                 String token = openSCASettingState.getOpenSCASetting().getToken();
                 if (!openSCASettingState.getOpenSCASetting().getRemoteDataSourceSelected()) token = "";
                 VerifyUtils.verifyUrl(url);
-                VerifyUtils.verifyToken(url,token);
-                // 提交任务
+                VerifyUtils.verifyToken(url, token);
+
+                // CLI地址校验
                 String engineCliPath = EngineAssistant.getEngineCliPath();
-                String outputPath = EngineAssistant.getCheckResultPath(project);
                 if (openSCASettingState.getOpenSCASetting().getUseCustomerCli()) {
                     engineCliPath = openSCASettingState.getOpenSCASetting().getCustomerPath();
                 }
+                LOG.info("OpenSCA CLI 目录:------>" + engineCliPath);
                 File cli = new File(engineCliPath);
                 if (!cli.exists() && !cli.isFile()) {
-                    Notification.balloonNotify("请配置OpenSCA CLI后进行检测", NotificationType.ERROR);
+                    NotificationUtils.balloonNotify("请配置OpenSCA CLI后进行检测", NotificationType.ERROR);
                     return;
                 }
+
+                // 检测是否为最新版 如果不是自动更新
+                EngineDownloader.checkAndUpdateToLatestVersion(engineCliPath, project);
+
                 // 创建数据源配置文件
                 makeConfigJsonFile(engineCliPath);
 
                 String inputPath = project.getBasePath();
-
-                String logFilePath = cli.getParent()+"/opensca.log";
-                String[] cmd = {engineCliPath, "-url", url, "-token", token, "-path", inputPath, "-out", outputPath, "-vuln", "-cache","-log",logFilePath};
+                String outputJsonPath = EngineAssistant.getCheckResultJsonPath(project);
+                String outputDsdxPath = EngineAssistant.getCheckResultDsdxPath(project);
+                String logFilePath = cli.getParent() + File.separator + "opensca.log";
+                String[] cmd = {engineCliPath, "-token", token, "-path", inputPath, "-out", outputJsonPath + "," + outputDsdxPath, "-log", logFilePath};
                 Process process = Runtime.getRuntime().exec(cmd);
                 processes.put(project, process);
-                LOG.info("OpenSCA开始检测:------>"+ Arrays.toString(cmd));
+                LOG.info("OpenSCA开始检测:------>" + Arrays.toString(cmd));
 
                 process.waitFor();
                 // 记录检测日志
@@ -112,17 +116,16 @@ public class CheckService {
                     result.append(line).append("\n");
                 }
                 String executionResult = result.toString();
-                LOG.info("OpenSCA检测结束:------>"+executionResult);
-
+                LOG.info("OpenSCA检测结束:------>" + executionResult);
 
                 // 解析结果
                 overview.setEndTime(new Date());
-                MutableTreeNode resultTree = ResultParser.parseResult(outputPath, overview);
+                MutableTreeNode resultTree = ResultParser.parseResult(outputJsonPath, overview);
                 listener.onSuccess(resultTree);
             } catch (Exception e) {
-                if(e instanceof InterruptedException){
-                    Notification.balloonNotify("检测停止成功",NotificationType.INFORMATION);
-                }else {
+                if (e instanceof InterruptedException) {
+                    NotificationUtils.balloonNotify("检测停止成功", NotificationType.INFORMATION);
+                } else {
                     LOG.error(e);
                 }
                 listener.onError(e);
@@ -158,7 +161,7 @@ public class CheckService {
      * @param listener
      */
     public static void clean(Project project, CheckListener listener) {
-        FileUtil.delete(new File(EngineAssistant.getCheckResultPath(project)));
+        FileUtil.delete(new File(EngineAssistant.getCheckResultJsonPath(project)));
         listener.clean();
     }
 
@@ -180,26 +183,24 @@ public class CheckService {
      * 将数据源写入配置文件
      * 无配置文件下载配置文件 有配置文件更新配置文件
      * FileWriter很坑 创建对象默认清空文件(顺序不要发生改变)
+     *
      * @param engineCliPath
      */
     private static void makeConfigJsonFile(String engineCliPath) throws IOException {
         try {
-            String cliParentFilePath = new File(engineCliPath).getParentFile().getAbsolutePath();
+            String cliParentFilePath = new File(engineCliPath).getParent();
             File configJsonFile = new File(cliParentFilePath + File.separator + "config.json");
             if (!configJsonFile.exists()) {
-                HttpService.downloadCliConfig(configJsonFile);
+                EngineDownloader.createCliConfig(engineCliPath);
             }
-            List<DsnConfig> dsnConfigList = openSCASettingState.getOpenSCASetting().getDsnConfigList();
-            // 收集已勾选的配置文件 写入JSON
-            List<DsnConfig> collect = dsnConfigList.stream().filter(item -> item.getSelect().equals(Boolean.TRUE)).collect(Collectors.toList());
-            String configJson = Origin.buildDsnJson(configJsonFile, collect);
+            String configJson = Origin.buildDsnJson(configJsonFile, openSCASettingState.getOpenSCASetting());
             FileWriter fileWriter = new FileWriter(configJsonFile);
             fileWriter.write(configJson);
             fileWriter.close();
         } catch (Exception e) {
-            LOG.error("创建配置文件失败:"+e);
+            LOG.error("创建配置文件失败:" + e);
             throw new SCAException(ErrorEnum.CREATE_FILE_ERROR);
         }
-
     }
+
 }

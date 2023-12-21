@@ -1,45 +1,85 @@
 package cn.xmirror.sca.engine;
 
-import cn.xmirror.sca.service.HttpService;
 import cn.xmirror.sca.common.exception.ErrorEnum;
 import cn.xmirror.sca.common.exception.SCAException;
-import cn.xmirror.sca.ui.Notification;
+import cn.xmirror.sca.service.HttpService;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.util.io.FileUtil;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * 下载引擎
  */
 public class EngineDownloader {
 
+
     /**
-     * 检测本地引擎，如果不存在则下载
-     *
-     * @param project 当前项目
+     * 检查更新最新版本的cli
+     * @param engineCliPath
+     * @param project
+     * @throws IOException
+     * @throws InterruptedException
      */
-    public static void checkAndDownload(Project project) {
-        // 检测引擎是否存在
-        String engineCliPath = EngineAssistant.getEngineCliPath();
-        File engineCli = new File(engineCliPath);
-        if (HttpService.needUpdateEngine(EngineAssistant.getEngineVersionPath()) || !engineCli.isFile()) {
-            // 创建目录
-            String engineCliDirectory = EngineAssistant.getDefaultEngineCliDirectory();
-            if (!FileUtil.createDirectory(new File(engineCliDirectory))) {
-                throw new SCAException(ErrorEnum.CREATE_DIR_ERROR, engineCliDirectory);
+    public static void checkAndUpdateToLatestVersion(String engineCliPath,Project project) throws IOException, InterruptedException {
+        String remoteServerCliVersion = HttpService.getRemoteServerCliVersion().trim();
+
+        String localCliVersion = getLocalCliVersion(engineCliPath).trim();
+        if (remoteServerCliVersion.equals(localCliVersion)) return;
+        // 版本号不一致 更新至最新版
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+            HttpService.downloadEngine(engineCliPath);
+            File engineCli = new File(engineCliPath);
+            if (!engineCli.canExecute() && !engineCli.setExecutable(true)) {
+                throw new SCAException(ErrorEnum.ENGINE_SET_EXECUTABLE_ERROR, engineCliPath);
             }
-            // 下载引擎
-            if (engineCli.isDirectory()) {
-                throw new SCAException(ErrorEnum.ENGINE_DOWNLOAD_ERROR);
+            try {
+                createCliConfig(engineCliPath);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> HttpService.downloadEngine(engineCli.getAbsolutePath()), "更新/下载OpenSCA命令行工具", false, project);
+        }, "更新/下载OpenSCA命令行工具", false, project);
+    }
+
+    /**
+     * 创建当前版本cli的 配置文件
+     * @param engineCliPath
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static String createCliConfig(String engineCliPath) throws IOException, InterruptedException {
+        File cliFile = new File(engineCliPath);
+
+        String configJsonFile = cliFile.getParent() +File.separator + "config.json";
+        File file = new File(configJsonFile);
+        if (file.exists()) file.delete();
+
+        String[] cmd = {engineCliPath, "-config",configJsonFile};
+        Process process = Runtime.getRuntime().exec(cmd);
+        process.waitFor();
+        return configJsonFile;
+    }
+
+
+    /**
+     * 获取当前版本cli的版本号
+     * @param engineCliPath
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private static String getLocalCliVersion(String engineCliPath) throws IOException, InterruptedException {
+        String[] cmd = {engineCliPath, "-version"};
+        Process process = Runtime.getRuntime().exec(cmd);
+        process.waitFor();
+
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        StringBuilder result = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            result.append(line).append("\n");
         }
-        // 设置引擎执行权限
-        if (!engineCli.canExecute() && !engineCli.setExecutable(true)) {
-            throw new SCAException(ErrorEnum.ENGINE_SET_EXECUTABLE_ERROR, engineCliPath);
-        }
+        return result.toString();
     }
 }

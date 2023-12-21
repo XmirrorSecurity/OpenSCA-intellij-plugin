@@ -1,7 +1,7 @@
 package cn.xmirror.sca.ui.window;
 
 import cn.xmirror.sca.common.OpenSCASettingState;
-import cn.xmirror.sca.ui.Notification;
+import cn.xmirror.sca.ui.NotificationUtils;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.NotificationType;
@@ -186,7 +186,7 @@ public class PaintUtils {
                 if (StringUtil.isNotEmpty(url)) {
                     BrowserUtil.open(url);
                 } else {
-                    Notification.balloonNotify("请先配置服务器地址", NotificationType.WARNING);
+                    NotificationUtils.balloonNotify("请先配置服务器地址", NotificationType.WARNING);
                 }
             }
 

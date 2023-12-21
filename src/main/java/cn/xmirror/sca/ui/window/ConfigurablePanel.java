@@ -6,8 +6,9 @@ import cn.xmirror.sca.common.exception.SCAException;
 import cn.xmirror.sca.common.pojo.DsnConfig;
 import cn.xmirror.sca.common.pojo.OpenSCASetting;
 import cn.xmirror.sca.engine.EngineAssistant;
+import cn.xmirror.sca.engine.EngineDownloader;
 import cn.xmirror.sca.service.HttpService;
-import cn.xmirror.sca.ui.Notification;
+import cn.xmirror.sca.ui.NotificationUtils;
 import cn.xmirror.sca.ui.dialog.AuthDialog;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.HelpTooltip;
@@ -215,7 +216,7 @@ public class ConfigurablePanel extends JPanel {
                     } catch (InterruptedException | IOException | SCAException ex) {
                         ex.printStackTrace();
                         LOG.error(ex);
-                        Notification.balloonNotify("Authentication Failed", NotificationType.ERROR);
+                        NotificationUtils.balloonNotify("Authentication Failed", NotificationType.ERROR);
                     }
                 }
             };
@@ -269,7 +270,9 @@ public class ConfigurablePanel extends JPanel {
     private void downLoadCliAndUpdateText(String type) {
         try {
             if (ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    () -> HttpService.downloadEngine(EngineAssistant.getEngineCliPath()), type + "OpenSCA命令行工具", false,
+                    () -> {
+                        HttpService.downloadEngine(EngineAssistant.getEngineCliPath());
+                    }, type + "OpenSCA命令行工具", false,
                     ProjectManager.getInstance().getDefaultProject(), this.getRootPane())) {
                 String version = HttpService.getRemoteServerCliVersion();
                 FileUtil.writeToFile(new File(EngineAssistant.getEngineVersionPath()), version);
@@ -278,6 +281,7 @@ public class ConfigurablePanel extends JPanel {
                 if (!engineCli.canExecute() && !engineCli.setExecutable(true)) {
                     throw new SCAException(ErrorEnum.ENGINE_SET_EXECUTABLE_ERROR, EngineAssistant.getEngineCliPath());
                 }
+                EngineDownloader.createCliConfig(engineCli.getPath());
                 versionLabel.setIcon(Icons.SUCCEEDED);
                 versionLabel.setText(version);
                 actionLink.setText("");
@@ -286,6 +290,8 @@ public class ConfigurablePanel extends JPanel {
             versionLabel.setIcon(Icons.FAILED);
             versionLabel.setText("OpenSCA CLI Downloads Error");
             LOG.error("###引擎下载失败###" + exception);
+        } catch (InterruptedException e) {
+            LOG.error("###引擎创建配置文件失败###" );
         }
     }
 
@@ -294,14 +300,14 @@ public class ConfigurablePanel extends JPanel {
         try {
             return FileUtil.loadFile(file);
         } catch (IOException error) {
-            Notification.balloonNotify(error.getMessage(), NotificationType.ERROR);
+            NotificationUtils.balloonNotify(error.getMessage(), NotificationType.ERROR);
             return "";
         }
     }
 
     private void testConnection(JPanel parent) {
         if (parent.getComponentCount() > 1) {
-            Notification.balloonNotify("操作太快了", NotificationType.WARNING);
+            NotificationUtils.balloonNotify("操作太快了", NotificationType.WARNING);
             return;
         }
         if (progressLabel == null) {

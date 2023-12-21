@@ -2,7 +2,7 @@ package cn.xmirror.sca.ui.window;
 
 import cn.xmirror.sca.common.dto.Origin;
 import cn.xmirror.sca.common.pojo.DsnConfig;
-import cn.xmirror.sca.ui.dialog.CancelOkDialog;
+import cn.xmirror.sca.ui.dialog.DataSourceDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -104,7 +104,7 @@ public class DsnListPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             // 弹出一个新创窗口 添加数据源
-            CancelOkDialog dialog = new CancelOkDialog(project, "添加数据源");
+            DataSourceDialog dialog = new DataSourceDialog(project, "添加数据源");
             dialog.show();
             if (dialog.isOK()) {
                 if (dialog.getDataSourceComboBox().getSelectedItem() == null || dialog.getDataSourceComboBox().getSelectedItem() == Origin.originTypeList.get(0)) {
@@ -142,7 +142,7 @@ public class DsnListPanel extends JPanel {
                 return;
             }
             DsnConfig dsnConfig = dsnTableModel.getLocationAt(selectedIndex);
-            CancelOkDialog dialog = new CancelOkDialog(project, "修改数据源");
+            DataSourceDialog dialog = new DataSourceDialog(project, "修改数据源");
             dialog.setDataSourceType(dsnConfig.getType());
             dialog.getDsnTextField().setText(dsnConfig.getDsn());
             dialog.getTableNameTextField().setText(dsnConfig.getTableName());

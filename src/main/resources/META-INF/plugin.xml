@@ -28,7 +28,7 @@
         <notificationGroup id="OpenSCA Notification Group"
                            displayType="BALLOON"/>
         <applicationConfigurable instance="cn.xmirror.sca.ui.action.Configurable"
-                                 id="cn.xmirror.sca.ui.action.Configurable"/>
+                                 id="cn.xmirror.sca.ui.action.Configurable" displayName="OpenSCA_Configurable"/>
         <applicationService serviceImplementation="cn.xmirror.sca.common.OpenSCASettingState"/>
     </extensions>
 

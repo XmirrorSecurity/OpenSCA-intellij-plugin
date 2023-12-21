@@ -49,11 +49,39 @@ public class ResultParser {
             if (StringUtil.isNotEmpty(result.getError())) {
                 throw new SCAException(ErrorEnum.ENGINE_UNREACHABLE_ERROR);
             }
-            return generateTree(overview, result.getChildren());
+
+            // 平铺获取有漏洞的组件
+            List<Component> componentList = new ArrayList<>();
+            result.getChildren().forEach(item -> {
+                List<Component> allComponent = getAllComponent(item, new ArrayList<Component>());
+                componentList.addAll(allComponent);
+            });
+
+            return generateTree(overview, componentList.isEmpty() ? result.getChildren() : componentList);
         } catch (IOException e) {
             LOG.error(e);
             throw new SCAException(ErrorEnum.CHECK_PARSE_RESULT_ERROR);
         }
+    }
+
+    /**
+     * 递归获取有漏洞的组件树
+     *
+     * @param component
+     * @param componentList
+     * @return
+     */
+    private static List<Component> getAllComponent(Component component, ArrayList<Component> componentList) {
+        if (component.getChildren() == null || component.getChildren().isEmpty()) {
+            return componentList;
+        }
+        for (Component child : component.getChildren()) {
+            if (child.getVulnerabilities() != null && !child.getVulnerabilities().isEmpty()) {
+                componentList.add(child);
+            }
+            getAllComponent(child, componentList);
+        }
+        return componentList;
     }
 
     /**
@@ -66,16 +94,16 @@ public class ResultParser {
     public static MutableTreeNode generateTree(Overview overview, List<Component> components) {
         RootTreeNode rootTreeNode = new RootTreeNode(overview);
         Set<String> distinctVulnerability = new HashSet<>();
-        Arrays.fill(overview.getCss(),0);
-        Arrays.fill(overview.getVss(),0);
+        Arrays.fill(overview.getCss(), 0);
+        Arrays.fill(overview.getVss(), 0);
         if (components != null) {
             Collection<Component> distinctAndSortComponentCollection = distinctAndSortComponent(components);
             List<String> pathList = distinctAndSortComponentCollection.stream().map(Component::getPath)
-                                    .distinct().collect(Collectors.toList());
-            pathList.forEach(path ->{
+                    .distinct().collect(Collectors.toList());
+            pathList.forEach(path -> {
                 FilePathTreeNode filePathTreeNode = new FilePathTreeNode(new FilePath(path));
                 distinctAndSortComponentCollection.forEach(component -> {
-                    if (component.getPath().equals(path)){
+                    if (component.getPath().equals(path)) {
                         ComponentTreeNode componentTreeNode = new ComponentTreeNode(component);
                         for (Vulnerability vulnerability : component.getVulnerabilities()) {
                             checkVulnerability(vulnerability);
@@ -121,12 +149,23 @@ public class ResultParser {
             if (cpt == null) {
                 component.setPaths(component.getPaths());
                 // 相同组件去重
-                if (component.getPaths().size() >= 1) {
-                    String path = component.getPaths().get(0).replace(CheckService.PROJECT_BASE_PATH,"");
-                    component.setPath(path.substring(0, path.indexOf("/[")));
+                if (!component.getPaths().isEmpty()) {
+                    String path = component.getPaths().get(0).replace(CheckService.PROJECT_BASE_PATH, "");
+                    component.setPath(path);
+                    if (path.contains("[")) {
+                        component.setPath(path.substring(0, path.indexOf("[") - 1));
+                    }
                 }
-                component.setVulnerabilities(component.getVulnerabilities().stream().sorted(Comparator.comparingInt(Vulnerability::getSecurityLevelId)).collect(Collectors.toList()));
-                component.setSecurityLevelId(component.getVulnerabilities().get(0).getSecurityLevelId());
+                List<Vulnerability> vulnerabilities = component.getVulnerabilities();
+                if (vulnerabilities != null && !vulnerabilities.isEmpty()) {
+                    List<Vulnerability> sortVulnListBySecurityLevelId = vulnerabilities.stream().sorted(Comparator.comparingInt(Vulnerability::getSecurityLevelId)).collect(Collectors.toList());
+                    component.setVulnerabilities(sortVulnListBySecurityLevelId);
+                    component.setSecurityLevelId(sortVulnListBySecurityLevelId.get(0).getSecurityLevelId());
+                } else {
+                    component.setVulnerabilities(new ArrayList<>());
+                    component.setSecurityLevelId(5);
+                }
+
                 mergeComponents.put(coordinate, component);
             }
         }

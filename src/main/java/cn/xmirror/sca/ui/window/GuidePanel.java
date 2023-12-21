@@ -1,6 +1,8 @@
 package cn.xmirror.sca.ui.window;
 
+import cn.xmirror.sca.ui.NotificationUtils;
 import com.intellij.icons.AllIcons;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.Tree;
@@ -77,7 +79,12 @@ public class GuidePanel extends JPanel {
         DefaultMutableTreeNode rootNode = overviewPanel.getRootNode();
         Tree tree = overviewPanel.getTree();
         tree.getSelectionModel().clearSelection();
-        tree.setSelectionPath(new TreePath(((DefaultTreeModel)tree.getModel()).getPathToRoot(rootNode.getFirstChild())));
+        if (rootNode.getChildCount() != 0) {
+            TreePath treePath = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(rootNode.getFirstChild()));
+            tree.setSelectionPath(treePath);
+        }else {
+            NotificationUtils.balloonNotify("请检测完成后,查看检测结果", NotificationType.WARNING);
+        }
     }
 
     private JPanel getSettingPanel() {

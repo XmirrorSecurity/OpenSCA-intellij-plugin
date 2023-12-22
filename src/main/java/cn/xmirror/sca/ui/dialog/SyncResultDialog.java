@@ -132,7 +132,7 @@ public class SyncResultDialog extends DialogWrapper {
                 }
             },project);
         } catch (Exception e) {
-            NotificationUtils.balloonNotify("同步上传漏洞失败", NotificationType.ERROR,project);
+            NotificationUtils.balloonNotify("检测记录已同步到SaaS端,请勿重新操作", NotificationType.ERROR,project);
         } finally {
             selectProjectUid = null;
             projectMap.clear();

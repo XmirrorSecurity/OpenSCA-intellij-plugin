@@ -68,7 +68,7 @@ public class EngineDownloader {
      * @throws IOException
      * @throws InterruptedException
      */
-    private static String getLocalCliVersion(String engineCliPath) throws IOException, InterruptedException {
+    public static String getLocalCliVersion(String engineCliPath) throws IOException, InterruptedException {
         String[] cmd = {engineCliPath, "-version"};
         Process process = Runtime.getRuntime().exec(cmd);
         process.waitFor();

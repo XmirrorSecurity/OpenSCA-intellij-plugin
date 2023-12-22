@@ -96,7 +96,6 @@ public class HttpService {
      * @return
      */
     public static void downloadEngine(String output) {
-        long beginTime = System.currentTimeMillis();
         Map<String, String> params = new HashMap<>();
         params.put("osName", EngineAssistant.getCurrentOsName());
         params.put("arch", EngineAssistant.getCurrentSystemArch());

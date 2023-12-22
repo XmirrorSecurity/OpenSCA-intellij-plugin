@@ -296,11 +296,13 @@ public class ConfigurablePanel extends JPanel {
     }
 
     private String getCliVersion() {
-        File file = new File(EngineAssistant.getEngineVersionPath());
+        String engineCliPath = EngineAssistant.getEngineCliPath();
         try {
-            return FileUtil.loadFile(file);
+            return EngineDownloader.getLocalCliVersion(engineCliPath);
         } catch (IOException error) {
             NotificationUtils.balloonNotify(error.getMessage(), NotificationType.ERROR);
+            return "";
+        } catch (InterruptedException e) {
             return "";
         }
     }

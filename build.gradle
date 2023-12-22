@@ -28,6 +28,7 @@ patchPluginXml {
     untilBuild = '233.*'
     changeNotes = """
         <ui>
+            <li>检测记录同步至SaaS</li>
             <li>增加多数据源、自定义cli配置</li>   
             <li>优化漏洞结果展示</li>  
             <li>修复Unix系统下命令行工具执行失败</li>

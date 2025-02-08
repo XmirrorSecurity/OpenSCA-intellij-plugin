@@ -72,13 +72,13 @@ public class ResultParser {
      * @return
      */
     private static List<Component> getAllComponent(Component component, ArrayList<Component> componentList) {
+        if (component.getVulnerabilities() != null && !component.getVulnerabilities().isEmpty()) {
+            componentList.add(component);
+        }
         if (component.getChildren() == null || component.getChildren().isEmpty()) {
             return componentList;
         }
         for (Component child : component.getChildren()) {
-            if (child.getVulnerabilities() != null && !child.getVulnerabilities().isEmpty()) {
-                componentList.add(child);
-            }
             getAllComponent(child, componentList);
         }
         return componentList;
@@ -175,6 +175,6 @@ public class ResultParser {
     @Data
     public static class Result {
         private List<Component> children;
-        private String error;
+            private String error;
     }
 }

@@ -47,14 +47,14 @@ public class SyncResultDialog extends DialogWrapper {
         projectMap = getProjectSelectMap(teamProjectSelectList);
 
         init();
-        setTitle("Upload Detect Result To OpenSCA");
+        setTitle("Upload Result to OpenSCA");
     }
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
         // 创建对话框面板，将树组件添加到面板中
         JPanel panel = new JPanel(new BorderLayout());
-        selectProjectLabel = new JLabel("请选择漏洞上传项目");
+        selectProjectLabel = new JLabel("同步检测结果至:");
         panel.add(selectProjectLabel, BorderLayout.NORTH);
         panel.add(createTreePanel(), BorderLayout.CENTER);
         return panel;
@@ -123,7 +123,7 @@ public class SyncResultDialog extends DialogWrapper {
         try {
             String recordUrl = HttpService.syncDetectResult(requestParamMap, jsonFile, dsdxFile, 10 * 1000);
             String url = "https://opensca.xmirror.cn/" + recordUrl;
-            String notificationText = "漏洞上传SaaS成功!";
+            String notificationText = "检测结果上传SaaS成功!";
             NotificationUtils.balloonNotifyWithAction(notificationText,NotificationType.INFORMATION, new NotificationAction("See Details In OpenSCA SaaS") {
                 @SneakyThrows
                 @Override
